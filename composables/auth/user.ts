@@ -1,117 +1,87 @@
-import { ref, watch, computed } from "vue";
+import { ref, watch } from "vue";
 import { useStorage } from "@vueuse/core";
+const user = ref(null);
 
-// Initialize the new properties
 const runtimeData = {
-  accessToken: ref(""),
-  refreshToken: ref(""),
-  role: ref(""),
+  auth: ref(),
+  user: ref({} as any),
+  token: ref(""),
 };
-
 const localStorageData = {
-  accessToken: useStorage("accessToken", ""),
-  refreshToken: useStorage("refreshToken", ""),
-  role: useStorage("role", ""),
+  auth: ref(),
+  user: useStorage("user", {} as any),
+  token: useStorage("token", ""),
 };
 
-const error = ref<string | null>(null);
-
-// Guard against null or undefined runtimeData values
 watch(
-  runtimeData,
+  runtimeData.user,
   (val) => {
-    Object.keys(val).forEach((key) => {
-      if (val[key] != null) {
-        localStorageData[key].value = val[key].value;
-      }
-    });
+    if (val && typeof val === "object") {
+      Object.keys(val).forEach((key) => {
+        localStorageData.user.value[key] = val[key];
+      });
+    }
   },
   { deep: true }
 );
 
 (() => {
-  runtimeData.accessToken.value = localStorageData.accessToken.value;
-  runtimeData.refreshToken.value = localStorageData.refreshToken.value;
-  runtimeData.role.value = localStorageData.role.value;
+  runtimeData.auth.value = localStorageData.auth.value;
+  runtimeData.user.value = localStorageData.user.value;
+  runtimeData.token.value = localStorageData.token.value;
 })();
 
-export const REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL as string;
-
 export const useUser = () => {
-  const accessToken = computed({
-    get: () => runtimeData?.accessToken?.value ?? "",
+  const id = computed({
+    get: () => runtimeData?.auth?.value?.id ?? "",
     set: () => {},
   });
 
-  const refreshToken = computed({
-    get: () => runtimeData?.refreshToken?.value ?? "",
-    set: () => {},
-  });
-
-  const role = computed({
-    get: () => runtimeData?.role?.value ?? "",
-    set: () => {},
-  });
 
   const isLoggedIn = computed({
     get: () => {
-      if (!runtimeData.accessToken?.value) return false;
-      return !!runtimeData.role?.value;
+      if (!runtimeData.token?.value) return false;
+      return (
+        runtimeData?.user?.value != null &&
+        typeof runtimeData.user.value === "object"
+      );
     },
     set: () => {},
   });
 
+  const isEmailVerified = computed(() => {
+    return runtimeData?.user?.value.isEmailVerified;
+  });
+
   const logOut = () => {
     localStorage.clear();
-    runtimeData.accessToken.value = "";
-    runtimeData.refreshToken.value = "";
-    runtimeData.role.value = "";
-    location.href = '/signin';
+    runtimeData.user.value = null;
   };
 
-  const setTokens = (accessToken: string, refreshToken: string) => {
-    runtimeData.accessToken.value = accessToken;
-    runtimeData.refreshToken.value = refreshToken;
-    localStorageData.accessToken.value = accessToken;
-    localStorageData.refreshToken.value = refreshToken;
+  const setToken = (token: string) => {
+    runtimeData.token.value = token;
+    localStorageData.token.value = token;
   };
-
   const createUser = (user: any) => {
-    console.log(user, 'from compose');
-    runtimeData.accessToken.value = user?.accessToken;
-    runtimeData.refreshToken.value = user?.refreshToken;
-    runtimeData.role.value = user?.role;
-    localStorageData.accessToken.value = user?.accessToken;
-    localStorageData.refreshToken.value = user?.refreshToken;
-    localStorageData.role.value = user?.role;
+    runtimeData.user.value = user?.user;
+    localStorageData.token.value = user?.accessToken;
+    runtimeData.token.value = user?.accessToken;
   };
 
-  const updateUser = (newUser: any) => {
-    // Retrieve the existing user data from local storage
-    const existingUser = JSON.parse(localStorage.getItem('user') || '{}');
-
-    // Merge the existing user data with the new user data
-    const updatedUser = { ...existingUser, ...newUser };
-
-    // Update the runtimeData and localStorage with the new user data
-    runtimeData.accessToken.value = updatedUser?.accessToken;
-    runtimeData.refreshToken.value = updatedUser?.refreshToken;
-    runtimeData.role.value = updatedUser?.role;
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    localStorageData.accessToken.value = updatedUser?.accessToken;
-    localStorageData.refreshToken.value = updatedUser?.refreshToken;
-    localStorageData.role.value = updatedUser?.role;
+  const updateUser = (user: any) => {
+    runtimeData.user.value = user;
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorageData.user.value = user;
   };
 
   return {
-    // accessToken,
-    // refreshToken,
-    // role,
+    id,
     isLoggedIn,
+    isEmailVerified,
     createUser,
     ...runtimeData,
     logOut,
     updateUser,
-    setTokens
+    setToken
   };
 };
