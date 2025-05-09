@@ -1,1 +1,1 @@
-Smart Trader Admin
+Wesly Admin
