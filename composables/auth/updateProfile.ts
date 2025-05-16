@@ -62,7 +62,7 @@ export const useUpdateProfile = () => {
           toastType: "success",
           duration: 3000,
         });
-        router.push("/dashboard");
+        router.push("/dashboard/settings");
       } else {
         showToast({
           title: "Error",

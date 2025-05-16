@@ -34,8 +34,8 @@ export const useAdminLogin = () => {
         toastType: "success",
         duration: 3000
       });
-      router.push("/dashboard");
-      window.location.href = "/dashboard"
+      router.push("/dashboard/settings");
+      window.location.href = "/dashboard/settings"
     }
   };
   return { credential, login, loading, isFormDisabled };

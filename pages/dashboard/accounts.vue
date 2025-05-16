@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
       <!-- Header with animation -->
       <div class="text-start mb-10 reveal-animation">
         <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600">
           Document Management
         </h1>
-        <p class="mt-4 text-start max-w-2xl text-xl text-gray-600 sm:mt-5">
+        <p class="mt-4 text-start max-w-2xl text-lg text-gray-600 sm:mt-5">
           Upload, download, and manage your customer and savings documents
         </p>
       </div>
@@ -71,7 +71,7 @@
             </p>
             <div class="ml-10">
               <button
-                @click="downloadTemplate(activeTab)"
+                @click="downloadTemplate"
                 :disabled="isDownloading"
                 class="download-button inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-full shadow-md text-white bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all duration-300"
               >
@@ -171,7 +171,7 @@
               {{ uploadError }}
             </div>
             
-            <!-- <div v-if="selectedFile && !isUploading && !uploadSuccess" class="mt-5 ml-10 flex items-center file-selected-animation">
+            <div v-if="selectedFile && !isUploading && !uploadSuccess" class="mt-5 ml-10 flex items-center file-selected-animation">
               <div class="flex-1 bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <div class="flex items-center">
                   <div class="bg-purple-100 p-2 rounded-full">
@@ -191,40 +191,18 @@
               >
                 Upload
               </button>
-            </div> -->
-
-            <div v-if="selectedFile && !isUploading && !uploadSuccess" class="mt-5 ml-10 flex items-center file-selected-animation">
-      <div class="flex-1 bg-gray-50 p-3 rounded-lg border border-gray-200">
-        <div class="flex items-center">
-          <div class="bg-purple-100 p-2 rounded-full">
-            <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-          </div>
-          <div class="ml-3">
-            <p class="text-sm font-medium text-gray-900">{{ selectedFile.name }}</p>
-            <p class="text-xs text-gray-500">{{ formatFileSize(selectedFile.size) }}</p>
-          </div>
-        </div>
-      </div>
-      <button 
-        @click="uploadFile"
-        class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all duration-300"
-      >
-        Upload
-      </button>
-    </div>
+            </div>
           </div>
 
           <!-- Documents Table -->
           <div class="card-section-animation" style="animation-delay: 0.4s">
-            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+            <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
               <span class="icon-circle bg-rose-100 p-2 rounded-full mr-3">
                 <svg class="h-5 w-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
               </span>
-              Uploaded Documents
+              {{ activeTab === 'customer' ? 'Customer' : 'Savings' }} Documents
             </h2>
             
             <div v-if="isLoadingDocuments" class="flex justify-center py-12 loading-animation">
@@ -233,17 +211,17 @@
               </div>
             </div>
             
-            <div v-else-if="documents.length === 0" class="text-center py-12 bg-gray-50 rounded-xl empty-state-animation ml-10">
+            <div v-else-if="documents.length === 0" class="text-center py-12 bg-gray-50 rounded-xl empty-state-animation">
               <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
               </svg>
               <h3 class="mt-4 text-lg font-medium text-gray-900">No documents</h3>
               <p class="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
-                Get started by uploading a document using the form above.
+                No {{ activeTab === 'customer' ? 'customer' : 'savings' }} documents are available at this time.
               </p>
             </div>
             
-            <div v-else class="flex flex-col mt-5 ml-10 table-animation">
+            <div v-else class="flex flex-col table-animation">
               <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                   <div class="shadow-sm overflow-hidden border border-gray-200 sm:rounded-xl">
@@ -251,23 +229,23 @@
                       <thead class="bg-gray-50">
                         <tr>
                           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Filename
+                            {{ activeTab === 'customer' ? 'Customer' : 'Account' }}
                           </th>
                           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Upload Date
+                            Contact
                           </th>
                           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Size
+                            BVN
                           </th>
                           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Type
+                            Status
                           </th>
                           <th scope="col" class="relative px-6 py-3">
                             <span class="sr-only">Actions</span>
                           </th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody class="bg-white divide-y divide-gray-200">
                         <tr 
                           v-for="(document, index) in documents" 
                           :key="document.id" 
@@ -276,28 +254,47 @@
                         >
                           <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
-                              <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-purple-100 rounded-lg">
-                                <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
+                              <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center bg-purple-100 rounded-full text-purple-700 font-bold">
+                                {{ document.firstName?.charAt(0) || 'A' }}{{ document.lastName?.charAt(0) || 'U' }}
                               </div>
                               <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">
-                                  {{ document.filename }}
+                                  {{ document.firstName || '' }} {{ document.middleName || '' }} {{ document.lastName || '' }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                  ID: {{ document.customerId || document.id }}
                                 </div>
                               </div>
                             </div>
                           </td>
                           <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ formatDate(document.uploadDate) }}</div>
+                            <div class="text-sm text-gray-900">{{ document.email || 'N/A' }}</div>
+                            <div class="text-sm text-gray-500">{{ document.phoneNumber || 'N/A' }}</div>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ document.bvn || 'N/A' }}
                           </td>
                           <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">{{ formatFileSize(document.size) }}</div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              {{ document.type }}
+                            <span 
+                              class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                              :class="getStatusClass(document.status)"
+                            >
+                              {{ document.status || 'Unknown' }}
                             </span>
+                            <div v-if="document.status === 'failed'" class="mt-1">
+                              <button 
+                                @click="toggleReason(document.id)" 
+                                class="text-xs text-rose-600 hover:text-rose-800"
+                              >
+                                {{ expandedReasons.includes(document.id) ? 'Hide reason' : 'Show reason' }}
+                              </button>
+                              <div 
+                                v-if="expandedReasons.includes(document.id)" 
+                                class="mt-2 text-xs text-gray-500 max-w-xs reason-animation"
+                              >
+                                {{ getSimplifiedReason(document.reason) }}
+                              </div>
+                            </div>
                           </td>
                           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <button 
@@ -306,13 +303,20 @@
                             >
                               Preview
                             </button>
-                            <a 
-                              :href="document.url" 
-                              download
+                            <button 
+                              @click="downloadDocument(document)"
                               class="text-purple-600 hover:text-purple-800 transition-colors duration-200"
+                              :disabled="isDownloading === document.id"
                             >
-                              Download
-                            </a>
+                              <span v-if="isDownloading === document.id" class="inline-flex items-center">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Downloading...
+                              </span>
+                              <span v-else>Download</span>
+                            </button>
                           </td>
                         </tr>
                       </tbody>
@@ -361,51 +365,129 @@
             <div class="sm:flex sm:items-start">
               <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                 <h3 class="text-lg leading-6 font-bold text-gray-900 modal-title-animation" id="modal-title">
-                  {{ previewingDocument?.filename }}
+                  {{ activeTab === 'customer' ? 'Customer' : 'Savings' }} Details
                 </h3>
-                <div class="mt-4 bg-gray-50 p-4 rounded-lg overflow-auto max-h-96 modal-content-animation">
-                  <!-- This would be replaced with actual document preview -->
-                  <p class="text-sm text-gray-500">
-                    Document preview would be displayed here. In a real application, you would integrate with a library
-                    that can render Excel files or convert them to HTML for preview.
-                  </p>
+                
+                <div v-if="previewingDocument" class="mt-4 bg-gray-50 p-6 rounded-lg overflow-auto max-h-96 modal-content-animation">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Personal Information -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                      <h4 class="text-sm font-semibold text-gray-700 mb-3 border-b pb-2">Personal Information</h4>
+                      <div class="space-y-2">
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">Full Name:</span>
+                          <span class="text-sm font-medium">{{ previewingDocument.firstName || '' }} {{ previewingDocument.middleName || '' }} {{ previewingDocument.lastName || '' }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">Gender:</span>
+                          <span class="text-sm">{{ previewingDocument.gender || 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">Date of Birth:</span>
+                          <span class="text-sm">{{ formatDate(previewingDocument.dob) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">Address:</span>
+                          <span class="text-sm">{{ previewingDocument.address || 'N/A' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                      <h4 class="text-sm font-semibold text-gray-700 mb-3 border-b pb-2">Contact Information</h4>
+                      <div class="space-y-2">
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">Email:</span>
+                          <span class="text-sm">{{ previewingDocument.email || 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">Phone Number:</span>
+                          <span class="text-sm">{{ previewingDocument.phoneNumber || 'N/A' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Account Information -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                      <h4 class="text-sm font-semibold text-gray-700 mb-3 border-b pb-2">Account Information</h4>
+                      <div class="space-y-2">
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">{{ activeTab === 'customer' ? 'Customer' : 'Account' }} ID:</span>
+                          <span class="text-sm">{{ previewingDocument.customerId || previewingDocument.id || 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">BVN:</span>
+                          <span class="text-sm">{{ previewingDocument.bvn || 'N/A' }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">NIN:</span>
+                          <span class="text-sm">{{ previewingDocument.nin === 'NULL' ? 'Not provided' : (previewingDocument.nin || 'N/A') }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Status Information -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                      <h4 class="text-sm font-semibold text-gray-700 mb-3 border-b pb-2">Status Information</h4>
+                      <div class="space-y-2">
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">Account Status:</span>
+                          <span 
+                            class="text-sm px-2 py-0.5 rounded-full text-xs"
+                            :class="getStatusBadgeClass(previewingDocument.accountStatus)"
+                          >
+                            {{ previewingDocument.accountStatus || 'N/A' }}
+                          </span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">{{ activeTab === 'customer' ? 'Customer' : 'Savings' }} Status:</span>
+                          <span 
+                            class="text-sm px-2 py-0.5 rounded-full text-xs"
+                            :class="getStatusBadgeClass(previewingDocument.customerStatus)"
+                          >
+                            {{ previewingDocument.customerStatus || 'N/A' }}
+                          </span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-xs text-gray-500">Overall Status:</span>
+                          <span 
+                            class="text-sm px-2 py-0.5 rounded-full text-xs"
+                            :class="getStatusBadgeClass(previewingDocument.status)"
+                          >
+                            {{ previewingDocument.status || 'N/A' }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   
-                  <!-- Placeholder table to simulate Excel preview -->
-                  <div class="mt-4 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 border">
-                      <thead>
-                        <tr>
-                          <th class="px-6 py-3 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">
-                            A
-                          </th>
-                          <th class="px-6 py-3 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">
-                            B
-                          </th>
-                          <th class="px-6 py-3 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">
-                            C
-                          </th>
-                          <th class="px-6 py-3 bg-gray-100 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border">
-                            D
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody class="bg-white divide-y divide-gray-200">
-                        <tr v-for="i in 10" :key="i" class="preview-row-animation" :style="{ animationDelay: `${0.05 * i}s` }">
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 border">
-                            {{ activeTab === 'customer' ? 'Customer' : 'Savings' }} {{ i }}
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border">
-                            {{ activeTab === 'customer' ? 'Name' : 'Account' }} {{ i }}
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border">
-                            {{ activeTab === 'customer' ? 'Email' : 'Amount' }} {{ i }}
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border">
-                            {{ activeTab === 'customer' ? 'Phone' : 'Date' }} {{ i }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <!-- Error Reason (if failed) -->
+                  <div v-if="previewingDocument.status === 'failed'" class="mt-6 bg-red-50 p-4 rounded-lg border border-red-100">
+                    <h4 class="text-sm font-semibold text-red-700 mb-2">Failure Reason</h4>
+                    <p class="text-xs text-red-600 whitespace-pre-wrap">{{ getSimplifiedReason(previewingDocument.reason) }}</p>
+                  </div>
+                  
+                  <div class="mt-6 flex justify-end">
+                    <button 
+                      @click="downloadDocument(previewingDocument)"
+                      class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all duration-300"
+                      :disabled="isDownloading === previewingDocument.id"
+                    >
+                      <span v-if="isDownloading === previewingDocument.id" class="inline-flex items-center">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Downloading...
+                      </span>
+                      <span v-else>
+                        <svg class="-ml-1 mr-2 h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Download as Excel
+                      </span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -419,83 +501,52 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
-import { useAccountDocumentUpload } from '@/composables/account/useAccountDocumentUpload'
-import { useSavingDocumentUpload } from '@/composables/account/useSavingDocumentUpload'
-import { useAccountDocuments, type AccountDocument } from '@/composables/account/useAccountDocuments'
-import { useSavingDocuments, type SavingDocument } from '@/composables/account/useSavingDocuments'
-import { useTemplateDownload, type TemplateType } from '@/composables/account/useTemplateDownload'
 import { definePageMeta } from '#imports'
 
-// Tabs3
+// Define types
+type DocumentType = 'customer' | 'savings'
+type Document = {
+  id: number
+  accountStatus?: string
+  address?: string
+  branch?: string | null
+  bvn?: string
+  customerId?: string
+  customerStatus?: string
+  dob?: string
+  email?: string
+  firstName?: string
+  gender?: string
+  lastName?: string
+  middleName?: string
+  nin?: string
+  phoneNumber?: string
+  productType?: string | null
+  reason?: string
+  userId?: string | null
+  status?: string
+  username?: string
+  createdAt?: string | null
+  updatedAt?: string | null
+  [key: string]: any // Allow for additional properties
+}
+
+// Tabs
 const tabs = [
   { name: 'Customer Documents', value: 'customer' },
   { name: 'Savings Documents', value: 'savings' }
 ]
-const activeTab = ref<TemplateType>('customer')
+const activeTab = ref<DocumentType>('customer')
 const activeTabPosition = ref(0)
 const activeTabWidth = ref(0)
 
-// Update tab indicator position
-const updateTabIndicator = async () => {
-  await nextTick()
-  const activeTabElement = document.querySelector('.tab-button.border-rose-500') as HTMLElement
-  if (activeTabElement) {
-    activeTabPosition.value = activeTabElement.offsetLeft
-    activeTabWidth.value = activeTabElement.offsetWidth
-  }
-}
-
-// Template download
-const { isDownloading, downloadTemplate } = useTemplateDownload()
-
-// File upload
-const isDragging = ref(false)
-const selectedFile = ref<File | null>(null)
-const uploadError = ref<string | null>(null)
-const uploadSuccess = ref(false)
-
-// Customer document upload
-const {
-  isUploading: isUploadingCustomer,
-  uploadProgress: uploadProgressCustomer,
-  error: errorCustomer,
-  success: successCustomer,
-  uploadAccountDocument
-} = useAccountDocumentUpload()
-
-// Savings document upload
-const {
-  isUploading: isUploadingSavings,
-  uploadProgress: uploadProgressSavings,
-  error: errorSavings,
-  success: successSavings,
-  uploadSavingDocument
-} = useSavingDocumentUpload()
-
 // Document lists
-const {
-  documents: customerDocuments,
-  isLoading: isLoadingCustomerDocuments,
-  error: customerDocumentsError,
-  fetchAccountDocuments
-} = useAccountDocuments()
-
-const {
-  documents: savingsDocuments,
-  isLoading: isLoadingSavingsDocuments,
-  error: savingsDocumentsError,
-  fetchSavingDocuments
-} = useSavingDocuments()
+const customerDocuments = ref<Document[]>([])
+const savingsDocuments = ref<Document[]>([])
+const isLoadingCustomerDocuments = ref(false)
+const isLoadingSavingsDocuments = ref(false)
 
 // Computed properties for current state based on active tab
-const isUploading = computed(() => 
-  activeTab.value === 'customer' ? isUploadingCustomer.value : isUploadingSavings.value
-)
-
-const uploadProgress = computed(() => 
-  activeTab.value === 'customer' ? uploadProgressCustomer.value : uploadProgressSavings.value
-)
-
 const documents = computed(() => 
   activeTab.value === 'customer' ? customerDocuments.value : savingsDocuments.value
 )
@@ -504,19 +555,204 @@ const isLoadingDocuments = computed(() =>
   activeTab.value === 'customer' ? isLoadingCustomerDocuments.value : isLoadingSavingsDocuments.value
 )
 
+// Template download
+const isDownloading = ref(false)
+
+// File upload
+const isDragging = ref(false)
+const selectedFile = ref<File | null>(null)
+const uploadError = ref<string | null>(null)
+const uploadSuccess = ref(false)
+const isUploading = ref(false)
+const uploadProgress = ref(0)
+
 // Preview modal
 const showPreview = ref(false)
-const previewingDocument = ref<AccountDocument | SavingDocument | null>(null)
+const previewingDocument = ref<Document | null>(null)
+const expandedReasons = ref<number[]>([])
 
-// Watch for tab changes to refresh data and update indicator
-watch(activeTab, () => {
-  if (activeTab.value === 'customer') {
-    fetchAccountDocuments()
-  } else {
-    fetchSavingDocuments()
+// API functions using fetch
+const getAuthToken = (): string => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    throw new Error('Authentication token not found')
   }
-  updateTabIndicator()
-})
+  return token
+}
+
+const getAuthHeaders = (): HeadersInit => {
+  return {
+    'Authorization': `Bearer ${getAuthToken()}`
+  }
+}
+
+const fetchDocuments = async (type: DocumentType) => {
+  try {
+    if (type === 'customer') {
+      isLoadingCustomerDocuments.value = true
+    } else {
+      isLoadingSavingsDocuments.value = true
+    }
+
+    const response = await fetch(`https://easypay-api.wesleymfb.com/api/auth/providers/get-file?type=${type}`, {
+      method: 'GET',
+      headers: getAuthHeaders()
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${type} documents: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    
+    if (type === 'customer') {
+      customerDocuments.value = data?.data?.content
+    } else {
+      savingsDocuments.value = data?.data?.content
+    }
+  } catch (error) {
+    console.error(`Error fetching ${type} documents:`, error)
+  } finally {
+    if (type === 'customer') {
+      isLoadingCustomerDocuments.value = false
+    } else {
+      isLoadingSavingsDocuments.value = false
+    }
+  }
+}
+
+const downloadTemplate = async () => {
+  try {
+    isDownloading.value = true
+    
+    const response = await fetch(`https://easypay-api.wesleymfb.com/api/auth/providers/template?type=${activeTab.value}`, {
+      method: 'GET',
+      headers: getAuthHeaders()
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to download template: ${response.statusText}`)
+    }
+
+    // Create a blob from the response
+    const blob = await response.blob()
+    
+    // Create a download link and trigger download
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.style.display = 'none'
+    a.href = url
+    a.download = `${activeTab.value}_template.xlsx`
+    document.body.appendChild(a)
+    a.click()
+    
+    // Clean up
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  } catch (error) {
+    console.error('Error downloading template:', error)
+    alert('Failed to download template. Please try again.')
+  } finally {
+    isDownloading.value = false
+  }
+}
+
+const uploadFile = async () => {
+  if (!selectedFile.value) return
+  
+  try {
+    isUploading.value = true
+    uploadProgress.value = 0
+    uploadError.value = null
+    
+    // Create FormData
+    const formData = new FormData()
+    formData.append('file', selectedFile.value)
+    
+    // Create XMLHttpRequest to track upload progress
+    const xhr = new XMLHttpRequest()
+    
+    // Setup progress tracking
+    xhr.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable) {
+        uploadProgress.value = Math.round((event.loaded / event.total) * 100)
+      }
+    })
+    
+    // Setup promise to handle completion
+    const uploadPromise = new Promise<void>((resolve, reject) => {
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve()
+        } else {
+          reject(new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`))
+        }
+      }
+      
+      xhr.onerror = () => {
+        reject(new Error('Network error occurred during upload'))
+      }
+    })
+    
+    // Open and send request
+    xhr.open('POST', `https://easypay-api.wesleymfb.com/api/auth/providers/upload-file?type=${activeTab.value}`)
+    xhr.setRequestHeader('Authorization', `Bearer ${getAuthToken()}`)
+    xhr.send(formData)
+    
+    // Wait for completion
+    await uploadPromise
+    
+    // Simulate a slight delay for better UX
+    setTimeout(() => {
+      uploadSuccess.value = true
+      isUploading.value = false
+      
+      // Refresh document list
+      fetchDocuments(activeTab.value)
+    }, 500)
+    
+  } catch (error) {
+    console.error('Error uploading file:', error)
+    uploadError.value = error instanceof Error ? error.message : 'Upload failed'
+    isUploading.value = false
+  }
+}
+
+const downloadDocument = async (document: Document) => {
+  try {
+    isDownloading.value = document.id
+    
+    const response = await fetch(`https://easypay-api.wesleymfb.com/api/auth/providers/download?id=${document.id}&type=${activeTab.value}`, {
+      method: 'GET',
+      headers: getAuthHeaders()
+    })
+    
+    if (!response.ok) {
+      throw new Error(`Failed to download document: ${response.statusText}`)
+    }
+    
+    const blob = await response.blob()
+    
+    // Create a download link and trigger download
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.style.display = 'none'
+    a.href = url
+    a.download = `${activeTab.value}_${document.id || document.customerId}.xlsx`
+    document.body.appendChild(a)
+    a.click()
+    
+    // Clean up
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+    
+  } catch (error) {
+    console.error('Error downloading document:', error)
+    alert('Failed to download document. Please try again.')
+  } finally {
+    isDownloading.value = null
+  }
+}
 
 // Methods
 const handleFileChange = (event: Event) => {
@@ -544,64 +780,109 @@ const handleFileDrop = (event: DragEvent) => {
   }
 }
 
-// const uploadFile = async () => {
-//   if (!selectedFile.value) return
-  
-//   try {
-//     if (activeTab.value === 'customer') {
-//       await uploadAccountDocument(selectedFile.value)
-//       if (successCustomer.value) {
-//         uploadSuccess.value = true
-//         fetchAccountDocuments()
-//       }
-//     } else {
-//       await uploadSavingDocument(selectedFile.value)
-//       if (successSavings.value) {
-//         uploadSuccess.value = true
-//         fetchSavingDocuments()
-//       }
-//     }
-//   } catch (err) {
-//     uploadError.value = err instanceof Error ? err.message : 'Upload failed'
-//   }
-// }
-
-// Fixed uploadFile function
-const uploadFile = async () => {
-  if (!selectedFile.value) return
-  
-  try {
-    // Reset error state
-    uploadError.value = null
-    console.log('upload here', selectedFile.value)
-    
-    if (activeTab.value === 'customer') {
-      // Call the API directly without checking success immediately
-      await uploadAccountDocument(selectedFile.value)
-      // Success will be handled by the watcher
-    } else {
-      // Call the API directly without checking success immediately
-      await uploadSavingDocument(selectedFile.value)
-      // Success will be handled by the watcher
-    }
-  } catch (err) {
-    // This catch block will handle any errors not caught by the composables
-    uploadError.value = err instanceof Error ? err.message : 'Upload failed'
-  }
-}
-
 const resetUpload = () => {
   selectedFile.value = null
   uploadError.value = null
   uploadSuccess.value = false
 }
 
-const previewDocument = (document: AccountDocument | SavingDocument) => {
+const previewDocument = (document: Document) => {
   previewingDocument.value = document
   showPreview.value = true
 }
 
-// Utility functions
+const toggleReason = (documentId: number) => {
+  if (expandedReasons.value.includes(documentId)) {
+    expandedReasons.value = expandedReasons.value.filter(id => id !== documentId)
+  } else {
+    expandedReasons.value.push(documentId)
+  }
+}
+
+// Update tab indicator position
+const updateTabIndicator = async () => {
+  await nextTick()
+  const activeTabElement = document.querySelector('.tab-button.border-rose-500') as HTMLElement
+  if (activeTabElement) {
+    activeTabPosition.value = activeTabElement.offsetLeft
+    activeTabWidth.value = activeTabElement.offsetWidth
+  }
+}
+
+// Helper functions
+const getStatusClass = (status?: string): string => {
+  if (!status) return 'bg-gray-100 text-gray-800'
+  
+  switch (status.toLowerCase()) {
+    case 'success':
+    case 'completed':
+    case 'active':
+      return 'bg-green-100 text-green-800'
+    case 'pending':
+    case 'processing':
+      return 'bg-yellow-100 text-yellow-800'
+    case 'failed':
+    case 'error':
+      return 'bg-red-100 text-red-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const getStatusBadgeClass = (status?: string): string => {
+  if (!status) return 'bg-gray-100 text-gray-800'
+  
+  switch (status.toLowerCase()) {
+    case 'success':
+    case 'completed':
+    case 'active':
+      return 'bg-green-100 text-green-800'
+    case 'pending':
+    case 'processing':
+      return 'bg-yellow-100 text-yellow-800'
+    case 'failed':
+    case 'error':
+      return 'bg-red-100 text-red-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const getSimplifiedReason = (reason?: string): string => {
+  if (!reason) return 'Unknown error'
+  
+  // Extract the most relevant part of the error message
+  if (reason.includes('defaultUserMessage')) {
+    try {
+      // Try to extract the defaultUserMessage from the JSON-like string
+      const match = reason.match(/"defaultUserMessage"\s*:\s*"([^"]+)"/)
+      if (match && match[1]) {
+        return match[1]
+      }
+    } catch (e) {
+      // If parsing fails, fall back to the original message
+    }
+  }
+  
+  // If we couldn't extract a specific message, return a simplified version
+  if (reason.length > 100) {
+    return reason.substring(0, 100) + '...'
+  }
+  
+  return reason
+}
+
+const formatDate = (dateString?: string | null): string => {
+  if (!dateString) return 'N/A'
+  
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
 const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 Bytes'
   
@@ -612,23 +893,19 @@ const formatFileSize = (bytes: number): string => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+// Watch for tab changes to refresh data and update indicator
+watch(activeTab, () => {
+  fetchDocuments(activeTab.value)
+  updateTabIndicator()
+  
+  // Reset upload state when switching tabs
+  resetUpload()
+})
 
 onMounted(() => {
-  if (activeTab.value === 'customer') {
-    fetchAccountDocuments()
-  } else {
-    fetchSavingDocuments()
-  }
+  // Initial data fetch for both tabs
+  fetchDocuments('customer')
+  fetchDocuments('savings')
   
   // Initialize tab indicator
   updateTabIndicator()
@@ -649,15 +926,10 @@ onMounted(() => {
   })
 })
 
-// definePageMeta({
-//   layout: 'admin'
-// })
-
 definePageMeta({
-    title: 'API Keys Management',
-    layout: 'admin'
+  title: 'Document Management',
+  layout: 'admin'
 })
-
 </script>
 
 <style scoped>
@@ -722,43 +994,6 @@ definePageMeta({
     height: 16px;
     width: 8px;
     opacity: 1;
-  }
-}
-
-/* Dot Pulse Animation */
-@keyframes dotPulse {
-  0% {
-    box-shadow: 9999px 0 0 -5px;
-  }
-  30% {
-    box-shadow: 9999px 0 0 2px;
-  }
-  60%, 100% {
-    box-shadow: 9999px 0 0 -5px;
-  }
-}
-
-@keyframes dotPulseBefore {
-  0% {
-    box-shadow: 9984px 0 0 -5px;
-  }
-  30% {
-    box-shadow: 9984px 0 0 2px;
-  }
-  60%, 100% {
-    box-shadow: 9984px 0 0 -5px;
-  }
-}
-
-@keyframes dotPulseAfter {
-  0% {
-    box-shadow: 10014px 0 0 -5px;
-  }
-  30% {
-    box-shadow: 10014px 0 0 2px;
-  }
-  60%, 100% {
-    box-shadow: 10014px 0 0 -5px;
   }
 }
 
@@ -836,14 +1071,112 @@ definePageMeta({
   animation: fadeInUp 0.6s ease-out;
 }
 
-.preview-row-animation {
-  opacity: 0;
-  animation: fadeInUp 0.3s ease-out forwards;
+.reason-animation {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.download-button:hover {
+/* Dot Pulse Animation */
+@keyframes dotPulse {
+  0% {
+    box-shadow: 9999px 0 0 -5px;
+  }
+  30% {
+    box-shadow: 9999px 0 0 2px;
+  }
+  60%, 100% {
+    box-shadow: 9999px 0 0 -5px;
+  }
+}
+
+@keyframes dotPulseBefore {
+  0% {
+    box-shadow: 9984px 0 0 -5px;
+  }
+  30% {
+    box-shadow: 9984px 0 0 2px;
+  }
+  60%, 100% {
+    box-shadow: 9984px 0 0 -5px;
+  }
+}
+
+@keyframes dotPulseAfter {
+  0% {
+    box-shadow: 10014px 0 0 -5px;
+  }
+  30% {
+    box-shadow: 10014px 0 0 2px;
+  }
+  60%, 100% {
+    box-shadow: 10014px 0 0 -5px;
+  }
+}
+
+.dot-pulse {
+  position: relative;
+  left: -9999px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #f43f5e;
+  color: #f43f5e;
+  box-shadow: 9999px 0 0 -5px;
+  animation: dotPulse 1.5s infinite linear;
+  animation-delay: 0.25s;
+}
+
+.dot-pulse::before, .dot-pulse::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #f43f5e;
+  color: #f43f5e;
+}
+
+.dot-pulse::before {
+  box-shadow: 9984px 0 0 -5px;
+  animation: dotPulseBefore 1.5s infinite linear;
+  animation-delay: 0s;
+}
+
+.dot-pulse::after {
+  box-shadow: 10014px 0 0 -5px;
+  animation: dotPulseAfter 1.5s infinite linear;
+  animation-delay: 0.5s;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+
+/* Scale effect for drag and drop */
+.scale-102 {
+  transform: scale(1.02);
+}
+
+/* Icon circle styling */
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* Tab indicator transition */
+.tab-button {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.25);
 }
 
 /* Success Checkmark Animation */
@@ -910,73 +1243,5 @@ definePageMeta({
   width: 47px;
   transform: rotate(-45deg);
   animation: checkmark 0.25s ease-in-out 0.4s forwards;
-}
-
-/* Dot Pulse Loader */
-.dot-pulse {
-  position: relative;
-  left: -9999px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: #f43f5e;
-  color: #f43f5e;
-  box-shadow: 9999px 0 0 -5px;
-  animation: dotPulse 1.5s infinite linear;
-  animation-delay: 0.25s;
-}
-
-.dot-pulse::before, .dot-pulse::after {
-  content: '';
-  display: inline-block;
-  position: absolute;
-  top: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: #f43f5e;
-  color: #f43f5e;
-}
-
-.dot-pulse::before {
-  box-shadow: 9984px 0 0 -5px;
-  animation: dotPulseBefore 1.5s infinite linear;
-  animation-delay: 0s;
-}
-
-.dot-pulse::after {
-  box-shadow: 10014px 0 0 -5px;
-  animation: dotPulseAfter 1.5s infinite linear;
-  animation-delay: 0.5s;
-}
-
-.loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80px;
-}
-
-/* Scale effect for drag and drop */
-.scale-102 {
-  transform: scale(1.02);
-}
-
-/* Icon circle styling */
-.icon-circle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-/* Tab indicator transition */
-.tab-button {
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.tab-button:hover {
-  transform: translateY(-2px);
 }
 </style>

@@ -33,7 +33,7 @@ export const useLogout = () => {
         toastType: "success",
         duration: 3000
       });
-      router.push("/dashboard");
+      router.push("/dashboard/settings");
     }
   };
   return { credential, logout, loading, isFormDisabled };

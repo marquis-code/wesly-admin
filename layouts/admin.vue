@@ -33,30 +33,24 @@
         
         <!-- Navigation -->
         <nav class="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-          <div v-for="(section, sectionIndex) in navigation" :key="sectionIndex" class="mb-6">
-            <h3 
-              class="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider transition-all duration-500"
-              :class="isSidebarCollapsed ? 'opacity-0' : 'opacity-100'"
-            >
-              {{ section.name }}
-            </h3>
-            
+          <div class="mb-6">
             <div class="space-y-1">
               <NuxtLink 
-                v-for="(item, itemIndex) in section.items" 
+                v-for="(item, index) in navigation" 
                 :key="item.name"
                 :to="item.href"
                 :class="[
-                  item.current ? 'bg-gradient-to-r from-rose-500 to-purple-600 text-white' : 'text-gray-600 hover:bg-gray-100',
+                  isActive(item.href) ? 'bg-gradient-to-r from-rose-500 to-purple-600 text-white' : 'text-gray-600 hover:bg-gray-100',
                   'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 nav-item-animation'
                 ]"
-                :style="{ animationDelay: `${(sectionIndex * 5 + itemIndex) * 50}ms` }"
+                :style="{ animationDelay: `${index * 50}ms` }"
+                @click="setActiveItem(item.href)"
               >
                 <component 
                   :is="item.icon" 
                   class="flex-shrink-0 w-6 h-6 mr-3 transition-transform duration-300 group-hover:scale-110"
                   :class="[
-                    item.current ? 'text-white' : 'text-gray-400 group-hover:text-rose-500',
+                    isActive(item.href) ? 'text-white' : 'text-gray-400 group-hover:text-rose-500',
                     isSidebarCollapsed ? 'mx-auto' : ''
                   ]"
                   aria-hidden="true" 
@@ -66,17 +60,6 @@
                   :class="isSidebarCollapsed ? 'opacity-0 scale-0 w-0' : 'opacity-100 scale-100'"
                 >
                   {{ item.name }}
-                </span>
-                
-                <!-- Badge -->
-                <span 
-                  v-if="item.badge && !isSidebarCollapsed" 
-                  class="ml-auto inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                  :class="[
-                    item.current ? 'bg-rose-200 text-rose-800' : 'bg-gray-200 text-gray-800'
-                  ]"
-                >
-                  {{ item.badge }}
                 </span>
               </NuxtLink>
             </div>
@@ -101,6 +84,7 @@
             <p class="text-xs text-gray-500">Administrator</p>
           </div>
           <button 
+            @click="showLogoutModal = true"
             class="ml-auto p-1 rounded-full text-gray-400 hover:text-gray-600 transition-colors duration-200"
             :class="isSidebarCollapsed ? 'opacity-0 scale-0 w-0' : 'opacity-100 scale-100'"
           >
@@ -154,11 +138,6 @@
               <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white"></span>
             </button>
             
-            <!-- Messages -->
-            <button class="p-1 text-gray-500 rounded-full hover:bg-gray-100 transition-colors duration-200">
-              <MessageSquare class="h-6 w-6" />
-            </button>
-            
             <!-- Settings -->
             <button class="p-1 text-gray-500 rounded-full hover:bg-gray-100 transition-colors duration-200 settings-icon">
               <Settings class="h-6 w-6" />
@@ -174,67 +153,132 @@
         </div>
       </main>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <Teleport to="body">
+      <div 
+        v-if="showLogoutModal" 
+        class="fixed inset-0 z-50 overflow-y-auto"
+        aria-labelledby="modal-title" 
+        role="dialog" 
+        aria-modal="true"
+      >
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <!-- Modal backdrop -->
+          <div 
+            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity modal-backdrop" 
+            aria-hidden="true"
+            @click="showLogoutModal = false"
+          ></div>
+
+          <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+          <!-- Modal panel -->
+          <div 
+            class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 modal-content"
+          >
+            <div class="sm:flex sm:items-start">
+              <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10 modal-icon-animation">
+                <LogOut class="h-6 w-6 text-red-600" aria-hidden="true" />
+              </div>
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left modal-text-animation">
+                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                  Logout Confirmation
+                </h3>
+                <div class="mt-2">
+                  <p class="text-sm text-gray-500">
+                    Are you sure you want to log out of your account? You will need to log in again to access your dashboard.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse modal-buttons-animation">
+              <button 
+                type="button" 
+                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gradient-to-r from-rose-500 to-purple-600 text-base font-medium text-white hover:from-rose-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-200"
+                @click="logout"
+              >
+                Logout
+              </button>
+              <button 
+                type="button" 
+                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 sm:mt-0 sm:w-auto sm:text-sm transition-all duration-200"
+                @click="showLogoutModal = false"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { 
-  Home, 
-  BarChart2, 
-  FileText, 
-  Users, 
-  ShoppingBag, 
-  ShoppingCart, 
-  Receipt, 
   Settings, 
   Shield, 
   Bell, 
-  Puzzle, 
   ChevronsLeft, 
   Menu, 
   Search, 
-  MessageSquare, 
   LogOut 
 } from 'lucide-vue-next'
 
 // Sidebar state
 const isSidebarOpen = ref(true)
 const isSidebarCollapsed = ref(false)
+const activeItem = ref('/dashboard/settings') // Default active item
+const showLogoutModal = ref(false)
+
+// Get current route and router
+const route = useRoute()
+const router = useRouter()
 
 // Toggle sidebar collapse state (for desktop)
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value
 }
 
-// Navigation items
-const navigation = [
-  {
-    name: 'Dashboard',
-    items: [
-      { name: 'Overview', href: '#', icon: Home, current: true },
-      { name: 'Analytics', href: '#', icon: BarChart2, current: false, badge: 'New' },
-      { name: 'Reports', href: '#', icon: FileText, current: false },
-    ]
-  },
-  {
-    name: 'Management',
-    items: [
-      { name: 'Customers', href: '#', icon: Users, current: false },
-      { name: 'Products', href: '#', icon: ShoppingBag, current: false },
-      { name: 'Orders', href: '#', icon: ShoppingCart, current: false, badge: '5' },
-      { name: 'Invoices', href: '#', icon: Receipt, current: false },
-    ]
-  },
-  {
-    name: 'Settings',
-    items: [
-      { name: 'General', href: '/dashboard/settings', icon: Settings, current: false },
-      { name: 'Accounts', href: '/dashboard/accounts', icon: Shield, current: false },
-      { name: 'Notifications', href: '#', icon: Bell, current: false },
-      { name: 'Integrations', href: '#', icon: Puzzle, current: false },
-    ]
+// Set active item
+const setActiveItem = (path: string) => {
+  activeItem.value = path
+  // Store in localStorage for persistence across page refreshes
+  localStorage.setItem('activeNavItem', path)
+}
+
+// Check if an item is active
+const isActive = (path: string) => {
+  // First check if the path matches the current route
+  if (route && route.path === path) {
+    return true
   }
+  // Otherwise use our stored active item
+  return activeItem.value === path
+}
+
+// Logout function
+const logout = () => {
+  // Add a small delay for the animation to complete
+  setTimeout(() => {
+    // Clear all localStorage items
+    localStorage.clear()
+    
+    // Redirect to home page
+    router.push('/')
+    
+    // Close the modal
+    showLogoutModal.value = false
+  }, 300)
+}
+
+// Navigation items - simplified to only include Accounts and Settings
+const navigation = [
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { name: 'Accounts', href: '/dashboard/accounts', icon: Shield }
 ]
 
 // Add animation classes when component is mounted
@@ -242,6 +286,15 @@ onMounted(() => {
   // Check if we should collapse sidebar on mobile by default
   if (window.innerWidth < 640) {
     isSidebarOpen.value = false
+  }
+  
+  // Restore active item from localStorage if available
+  const savedActiveItem = localStorage.getItem('activeNavItem')
+  if (savedActiveItem) {
+    activeItem.value = savedActiveItem
+  } else if (route && route.path) {
+    // If no saved item but we have a route, use that
+    activeItem.value = route.path
   }
   
   // Add animation to navigation items
@@ -272,6 +325,17 @@ onMounted(() => {
   }
 }
 
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 @keyframes pulse {
   0%, 100% {
     transform: scale(1);
@@ -296,6 +360,18 @@ onMounted(() => {
   }
   50% {
     transform: translateY(-5px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
   }
 }
 
@@ -331,6 +407,40 @@ onMounted(() => {
   animation: spin 1s ease-in-out;
 }
 
+/* Modal animations */
+.modal-backdrop {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  animation: slideInUp 0.4s ease-out;
+}
+
+.modal-icon-animation {
+  animation: pulse 1s ease-in-out;
+}
+
+.modal-text-animation {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.modal-buttons-animation {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.modal-buttons-animation button:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.modal-buttons-animation button:first-child:hover {
+  animation: pulse 1s infinite;
+}
+
+.modal-buttons-animation button:last-child:hover {
+  animation: shake 0.5s;
+}
+
 /* Scale effect for hover states */
 .scale-hover {
   transition: transform 0.2s ease;
@@ -338,5 +448,16 @@ onMounted(() => {
 
 .scale-hover:hover {
   transform: scale(1.05);
+}
+
+/* Fix for active link styles */
+.router-link-active,
+.router-link-exact-active {
+  @apply bg-gradient-to-r from-rose-500 to-purple-600 text-white;
+}
+
+.router-link-active svg,
+.router-link-exact-active svg {
+  @apply text-white;
 }
 </style>
