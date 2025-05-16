@@ -24,6 +24,7 @@ export const useAdminLogin = () => {
       password: credential.password.value,
       usernameOrEmail: credential.usernameOrEmail.value,
     })) as any;
+    console.log(res, 'resvponse here')
     loading.value = false;
     if (res.type !== "ERROR") {
       useUser().createUser(res.data);
@@ -33,8 +34,8 @@ export const useAdminLogin = () => {
         toastType: "success",
         duration: 3000
       });
-      router.push("/settings");
-      window.location.href = "/settings"
+      router.push("/dashboard");
+      window.location.href = "/dashboard"
     }
   };
   return { credential, login, loading, isFormDisabled };

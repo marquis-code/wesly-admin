@@ -58,7 +58,7 @@
         <div class="px-6 py-8 sm:p-8">
           <!-- Download Template Section -->
           <div class="mb-12 card-section-animation">
-            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <span class="icon-circle bg-rose-100 p-2 rounded-full mr-3">
                 <svg class="h-5 w-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -88,7 +88,7 @@
 
           <!-- Upload Section -->
           <div class="mb-12 card-section-animation" style="animation-delay: 0.2s">
-            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+            <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <span class="icon-circle bg-purple-100 p-2 rounded-full mr-3">
                 <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 0115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
@@ -171,7 +171,7 @@
               {{ uploadError }}
             </div>
             
-            <div v-if="selectedFile && !isUploading && !uploadSuccess" class="mt-5 ml-10 flex items-center file-selected-animation">
+            <!-- <div v-if="selectedFile && !isUploading && !uploadSuccess" class="mt-5 ml-10 flex items-center file-selected-animation">
               <div class="flex-1 bg-gray-50 p-3 rounded-lg border border-gray-200">
                 <div class="flex items-center">
                   <div class="bg-purple-100 p-2 rounded-full">
@@ -191,7 +191,29 @@
               >
                 Upload
               </button>
-            </div>
+            </div> -->
+
+            <div v-if="selectedFile && !isUploading && !uploadSuccess" class="mt-5 ml-10 flex items-center file-selected-animation">
+      <div class="flex-1 bg-gray-50 p-3 rounded-lg border border-gray-200">
+        <div class="flex items-center">
+          <div class="bg-purple-100 p-2 rounded-full">
+            <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-900">{{ selectedFile.name }}</p>
+            <p class="text-xs text-gray-500">{{ formatFileSize(selectedFile.size) }}</p>
+          </div>
+        </div>
+      </div>
+      <button 
+        @click="uploadFile"
+        class="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all duration-300"
+      >
+        Upload
+      </button>
+    </div>
           </div>
 
           <!-- Documents Table -->
@@ -404,7 +426,7 @@ import { useSavingDocuments, type SavingDocument } from '@/composables/account/u
 import { useTemplateDownload, type TemplateType } from '@/composables/account/useTemplateDownload'
 import { definePageMeta } from '#imports'
 
-// Tabs
+// Tabs3
 const tabs = [
   { name: 'Customer Documents', value: 'customer' },
   { name: 'Savings Documents', value: 'savings' }
@@ -522,24 +544,48 @@ const handleFileDrop = (event: DragEvent) => {
   }
 }
 
+// const uploadFile = async () => {
+//   if (!selectedFile.value) return
+  
+//   try {
+//     if (activeTab.value === 'customer') {
+//       await uploadAccountDocument(selectedFile.value)
+//       if (successCustomer.value) {
+//         uploadSuccess.value = true
+//         fetchAccountDocuments()
+//       }
+//     } else {
+//       await uploadSavingDocument(selectedFile.value)
+//       if (successSavings.value) {
+//         uploadSuccess.value = true
+//         fetchSavingDocuments()
+//       }
+//     }
+//   } catch (err) {
+//     uploadError.value = err instanceof Error ? err.message : 'Upload failed'
+//   }
+// }
+
+// Fixed uploadFile function
 const uploadFile = async () => {
   if (!selectedFile.value) return
   
   try {
+    // Reset error state
+    uploadError.value = null
+    console.log('upload here', selectedFile.value)
+    
     if (activeTab.value === 'customer') {
+      // Call the API directly without checking success immediately
       await uploadAccountDocument(selectedFile.value)
-      if (successCustomer.value) {
-        uploadSuccess.value = true
-        fetchAccountDocuments()
-      }
+      // Success will be handled by the watcher
     } else {
+      // Call the API directly without checking success immediately
       await uploadSavingDocument(selectedFile.value)
-      if (successSavings.value) {
-        uploadSuccess.value = true
-        fetchSavingDocuments()
-      }
+      // Success will be handled by the watcher
     }
   } catch (err) {
+    // This catch block will handle any errors not caught by the composables
     uploadError.value = err instanceof Error ? err.message : 'Upload failed'
   }
 }

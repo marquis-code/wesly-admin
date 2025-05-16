@@ -1,13 +1,70 @@
+// import { ref } from 'vue'
+// import { document_api } from '@/apiFactory/modules/account'
+
+// export const useAccountDocumentUpload = () => {
+//   const isUploading = ref(false)
+//   const uploadProgress = ref(0)
+//   const error = ref<string | null>(null)
+//   const success = ref(false)
+
+//   const uploadAccountDocument = async (file: File) => {
+//     isUploading.value = true
+//     error.value = null
+//     success.value = false
+//     uploadProgress.value = 0
+
+//     try {
+//       const formData = new FormData()
+//       formData.append('file', file)
+
+//       // Create upload request
+//       const response = await document_api.$_upload_account_document(formData)
+      
+//       // Simulate progress (in a real app, you'd use axios progress events)
+//       const progressInterval = setInterval(() => {
+//         uploadProgress.value += 10
+//         if (uploadProgress.value >= 100) {
+//           clearInterval(progressInterval)
+//         }
+//       }, 300)
+
+//       success.value = true
+//       return response
+//     } catch (err) {
+//       error.value = err instanceof Error ? err.message : 'Failed to upload document'
+//       throw err
+//     } finally {
+//       isUploading.value = false
+//     }
+//   }
+
+//   return {
+//     isUploading,
+//     uploadProgress,
+//     error,
+//     success,
+//     uploadAccountDocument
+//   }
+// }
+
 import { ref } from 'vue'
+// import { useDocumentApi } from '@/services/api/document'
 import { document_api } from '@/apiFactory/modules/account'
 
 export const useAccountDocumentUpload = () => {
+  // const document_api = useDocumentApi()
+
   const isUploading = ref(false)
   const uploadProgress = ref(0)
-  const error = ref<string | null>(null)
   const success = ref(false)
+  const error = ref<string | null>(null)
 
+
+  const { $_upload_account_document } = document_api
+
+  // Fix the uploadAccountDocument function to properly handle the FormData
   const uploadAccountDocument = async (file: File) => {
+    console.log(file, 'file from composable')
     isUploading.value = true
     error.value = null
     success.value = false
@@ -18,31 +75,36 @@ export const useAccountDocumentUpload = () => {
       formData.append('file', file)
 
       // Create upload request
-      const response = await document_api.$_upload_account_document()
+      const response = await $_upload_account_document(formData) as any
       
       // Simulate progress (in a real app, you'd use axios progress events)
       const progressInterval = setInterval(() => {
         uploadProgress.value += 10
         if (uploadProgress.value >= 100) {
           clearInterval(progressInterval)
+          // Set success after progress is complete
+          success.value = true
         }
       }, 300)
 
-      success.value = true
       return response
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to upload document'
       throw err
     } finally {
-      isUploading.value = false
+      // Don't set isUploading to false here, let the progress animation complete first
+      // isUploading will be set to false after the progress reaches 100%
+      setTimeout(() => {
+        isUploading.value = false
+      }, 3000); // Ensure this is longer than the progress animation
     }
   }
 
   return {
     isUploading,
     uploadProgress,
-    error,
     success,
+    error,
     uploadAccountDocument
   }
 }
