@@ -6,4 +6,8 @@
 
 <script setup lang="ts">
 // Main page imports the CsvHandler component
+
+definePageMeta({
+    layout: 'admin'
+})
 </script>
