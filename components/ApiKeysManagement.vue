@@ -98,14 +98,14 @@
       <!-- Quick Actions -->
       <div class="mb-8 fade-in-up" style="animation-delay: 300ms">
         <div class="flex flex-wrap justify-center gap-3">
-          <button 
+          <!-- <button 
             @click="openPasswordModal" 
             class="inline-flex items-center px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 hover:text-rose-600 shadow-sm hover:shadow transition-all duration-200 scale-hover"
           >
             <LockIcon class="w-4 h-4 mr-2" />
             <span>Update Password</span>
-          </button>
-          
+          </button> -->
+<!--           
           <button 
             class="inline-flex items-center px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 hover:text-purple-600 shadow-sm hover:shadow transition-all duration-200 scale-hover"
           >
@@ -118,7 +118,7 @@
           >
             <KeyIcon class="w-4 h-4 mr-2" />
             <span>JWT Public Key</span>
-          </button>
+          </button> -->
           
           <button 
             @click="openSaveChangesModal" 
