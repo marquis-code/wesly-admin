@@ -13,30 +13,20 @@
     <!-- Stats cards -->
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
       <div 
-        v-for="(stat, index) in stats" 
-        :key="stat.name"
+        v-for="(stat, index) in formattedStats" 
+        :key="stat.key"
         class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-all duration-300 stat-card"
         :style="{ animationDelay: `${index * 100}ms` }"
       >
         <div class="flex items-center">
-          <div :class="`p-3 rounded-lg ${stat.bgColor}`">
+          <div class="p-3 rounded-lg" :class="stat.bgColor">
             <component :is="stat.icon" class="h-6 w-6 text-white" />
           </div>
           <div class="ml-5 w-0 flex-1">
             <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">{{ stat.name }}</dt>
+              <dt class="text-sm font-medium text-gray-500 truncate">{{ stat.label }}</dt>
               <dd>
                 <div class="text-lg font-semibold text-gray-900">{{ stat.value }}</div>
-                <div class="flex items-center text-sm">
-                  <span :class="stat.changeType === 'increase' ? 'text-green-600' : 'text-rose-600'">
-                    <TrendingUp v-if="stat.changeType === 'increase'" class="h-4 w-4" />
-                    <TrendingDown v-else class="h-4 w-4" />
-                  </span>
-                  <span :class="stat.changeType === 'increase' ? 'text-green-600' : 'text-rose-600'" class="ml-1">
-                    {{ stat.change }}
-                  </span>
-                  <span class="ml-1 text-gray-500">vs last month</span>
-                </div>
               </dd>
             </dl>
           </div>
@@ -49,6 +39,8 @@
 
 <script setup lang="ts">
 import { definePageMeta } from '#imports'
+import { useFetchDashboardStats } from "@/composables/dashboard/useFetchDashboardStats"
+import { computed } from 'vue'
 import { 
   DollarSign, 
   UserPlus, 
@@ -57,81 +49,98 @@ import {
   ShoppingCart, 
   RefreshCw, 
   TrendingUp, 
-  TrendingDown 
+  TrendingDown,
+  CheckCircle,
+  PiggyBank,
+  FileText,
+  CreditCard
 } from 'lucide-vue-next'
 
-// Stats data
-const stats = [
-  {
-    name: 'Total Revenue',
-    value: '$45,231',
-    change: '12%',
-    changeType: 'increase',
-    bgColor: 'bg-gradient-to-r from-rose-500 to-rose-600',
-    icon: DollarSign
-  },
-  {
-    name: 'New Customers',
-    value: '2,845',
-    change: '5.3%',
-    changeType: 'increase',
-    bgColor: 'bg-gradient-to-r from-purple-500 to-purple-600',
-    icon: UserPlus
-  },
-  {
-    name: 'Active Products',
-    value: '1,249',
-    change: '2.1%',
-    changeType: 'decrease',
-    bgColor: 'bg-gradient-to-r from-blue-500 to-blue-600',
-    icon: ShoppingBag
-  },
-  {
-    name: 'Pending Orders',
-    value: '42',
-    change: '8.4%',
-    changeType: 'increase',
-    bgColor: 'bg-gradient-to-r from-amber-500 to-amber-600',
-    icon: Clock
-  }
-]
-
-// Recent activities
-const activities = [
-  {
-    title: 'New order placed',
-    description: 'John Doe placed a new order for Premium Package',
-    time: '2 minutes ago',
-    icon: ShoppingCart,
-    iconBg: 'bg-gradient-to-r from-rose-500 to-rose-600'
-  },
-  {
-    title: 'New customer registered',
-    description: 'Jane Smith created a new account',
-    time: '45 minutes ago',
-    icon: UserPlus,
-    iconBg: 'bg-gradient-to-r from-purple-500 to-purple-600'
-  },
-  {
-    title: 'Payment received',
-    description: 'Payment of $1,250 received from ABC Corp',
-    time: '2 hours ago',
-    icon: DollarSign,
-    iconBg: 'bg-gradient-to-r from-green-500 to-green-600'
-  },
-  {
-    title: 'Product updated',
-    description: 'Product "Wireless Headphones" was updated',
-    time: '5 hours ago',
-    icon: RefreshCw,
-    iconBg: 'bg-gradient-to-r from-blue-500 to-blue-600'
-  }
-]
+const { statsObj, loading } = useFetchDashboardStats()
 
 // Define layout
 definePageMeta({
   layout: 'admin'
 })
+
+// Icon and color mapping for different stat types
+const statConfig = {
+  totalUploadedAccount: {
+    icon: UserPlus,
+    label: 'Total Uploaded Accounts',
+    bgColor: 'bg-blue-500'
+  },
+  totalUploadedSavings: {
+    icon: PiggyBank,
+    label: 'Total Uploaded Savings',
+    bgColor: 'bg-green-500'
+  },
+  successfulAccountProcessed: {
+    icon: CheckCircle,
+    label: 'Successful Accounts Processed',
+    bgColor: 'bg-emerald-500'
+  },
+  successfulSavingsProcessed: {
+    icon: DollarSign,
+    label: 'Successful Savings Processed',
+    bgColor: 'bg-purple-500'
+  },
+  // Add more mappings as needed
+  totalRevenue: {
+    icon: DollarSign,
+    label: 'Total Revenue',
+    bgColor: 'bg-green-500'
+  },
+  totalOrders: {
+    icon: ShoppingCart,
+    label: 'Total Orders',
+    bgColor: 'bg-blue-500'
+  },
+  pendingOrders: {
+    icon: Clock,
+    label: 'Pending Orders',
+    bgColor: 'bg-yellow-500'
+  },
+  completedTasks: {
+    icon: CheckCircle,
+    label: 'Completed Tasks',
+    bgColor: 'bg-emerald-500'
+  }
+}
+
+// Fallback configuration for unknown stat keys
+const defaultConfig = {
+  icon: FileText,
+  bgColor: 'bg-gray-500'
+}
+
+// Format the stats with icons and labels
+const formattedStats = computed(() => {
+  if (!statsObj.value) return []
+  
+  return Object.entries(statsObj.value).map(([key, value]) => {
+    const config = statConfig[key as keyof typeof statConfig] || {
+      ...defaultConfig,
+      label: formatKeyToLabel(key)
+    }
+    
+    return {
+      key,
+      value,
+      ...config
+    }
+  })
+})
+
+// Function to convert camelCase keys to readable labels
+function formatKeyToLabel(key: string): string {
+  return key
+    // Insert space before uppercase letters
+    .replace(/([A-Z])/g, ' $1')
+    // Capitalize first letter and trim
+    .replace(/^./, str => str.toUpperCase())
+    .trim()
+}
 </script>
 
 <style scoped>

@@ -68,8 +68,8 @@
             class="ml-3"
             :class="isSidebarCollapsed ? 'hidden' : 'block'"
           >
-            <p class="text-sm font-medium text-gray-800">John Doe</p>
-            <p class="text-xs text-gray-500">Administrator</p>
+            <p class="text-sm font-medium text-gray-800">{{profileObj?.name ?? 'Nil'}} </p>
+            <p class="text-xs text-gray-500">{{profileObj?.username ?? 'Nil'}}</p>
           </div>
           <button 
             @click="showLogoutModal = true"
@@ -360,6 +360,8 @@
 import { ref, onMounted, computed, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUpdatePassword } from '@/composables/auth/useUpdatePassword';
+import { useFetchProfile } from "@/composables/dashboard/useFetchProfile"
+const { profileObj, loading } = useFetchProfile()
 const { updatePassword, loading: processing } = useUpdatePassword();
 import { 
   Settings, 
@@ -370,7 +372,8 @@ import {
   Eye,
   EyeOff,
   FileText,
-  Key
+  Key,
+  Home
 } from 'lucide-vue-next'
 
 // Sidebar state
@@ -423,6 +426,7 @@ const logout = () => {
 
 // Navigation items - updated as requested
 const navigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Accounts', href: '/dashboard/accounts', icon: FileText },
   { name: 'API Keys', href: '/dashboard/settings', icon: FileText },
   { name: 'Profile', href: '/dashboard/profile', icon: User },
