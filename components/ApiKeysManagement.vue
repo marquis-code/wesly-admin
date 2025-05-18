@@ -135,7 +135,7 @@
       <!-- API Keys Sections -->
       <div class="space-y-6">
         <!-- Base URL -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 400ms">
+        <div v-if="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 400ms">
           <div class="flex items-center justify-between bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <div class="flex items-center">
               <h3 class="text-lg font-medium text-gray-900">Base URL</h3>
@@ -168,7 +168,7 @@
         </div>
 
         <!-- Client Credentials Section -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 500ms">
+        <div v-if="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 500ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">Client Credentials</h3>
           </div>
@@ -272,7 +272,7 @@
         </div>
 
         <!-- Institution Details Section -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 600ms">
+        <div v-if="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 600ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">Institution Details</h3>
           </div>
@@ -368,6 +368,7 @@
         </div>
 
         <!-- GL Accounts Section -->
+         <!-- {{activeProvider}} -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 700ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">GL Accounts</h3>

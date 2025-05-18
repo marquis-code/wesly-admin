@@ -621,10 +621,72 @@ const fetchDocuments = async (type: DocumentType) => {
   }
 }
 
+// const downloadTemplate = async () => {
+//   try {
+//     isDownloading.value = true
+    
+//     const response = await fetch(`https://easypay-api.wesleymfb.com/api/auth/providers/template?type=${activeTab.value}`, {
+//       method: 'GET',
+//       headers: getAuthHeaders()
+//     })
+
+//     if (!response.ok) {
+//       throw new Error(`Failed to download template: ${response.statusText}`)
+//     }
+
+//     // Create a blob from the response
+//     const blob = await response.blob()
+    
+//     // Create a download link and trigger download
+//     const url = window.URL.createObjectURL(blob)
+//     const a = document.createElement('a')
+//     a.style.display = 'none'
+//     a.href = url
+//     a.download = `${activeTab.value}_template.xlsx`
+//     document.body.appendChild(a)
+//     a.click()
+    
+//     // Clean up
+//     window.URL.revokeObjectURL(url)
+//     document.body.removeChild(a)
+//   } catch (error) {
+//     console.error('Error downloading template:', error)
+//     alert('Failed to download template. Please try again.')
+//   } finally {
+//     isDownloading.value = false
+//   }
+// }
+
 const downloadTemplate = async () => {
   try {
     isDownloading.value = true
     
+    // Define the template filename based on active tab
+    const templateFileName = `${activeTab.value}_template.xlsx`;
+    
+    // First try to download directly from public folder
+    try {
+      // Create a direct link to the file in the public directory
+      const publicUrl = `/templates/${templateFileName}`;
+      
+      // Create an anchor element to trigger the download
+      const a = document.createElement('a');
+      a.href = publicUrl;
+      a.download = templateFileName;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      // Download successful, exit function
+      isDownloading.value = false;
+      return;
+    } catch (localError) {
+      console.warn('Could not download from public folder, falling back to API:', localError);
+      // Continue to API fallback if local download fails
+    }
+    
+    // Fallback: API download if direct download fails
     const response = await fetch(`https://easypay-api.wesleymfb.com/api/auth/providers/template?type=${activeTab.value}`, {
       method: 'GET',
       headers: getAuthHeaders()
@@ -642,7 +704,7 @@ const downloadTemplate = async () => {
     const a = document.createElement('a')
     a.style.display = 'none'
     a.href = url
-    a.download = `${activeTab.value}_template.xlsx`
+    a.download = templateFileName
     document.body.appendChild(a)
     a.click()
     
