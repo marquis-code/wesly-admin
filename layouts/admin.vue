@@ -57,11 +57,11 @@
         <!-- User profile -->
         <div class="flex items-center p-4 border-t border-gray-100">
           <div class="relative flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
-            <img 
+            <!-- <img 
               src="@/assets/img/avatar.png" 
               alt="User avatar"
               class="absolute inset-0 w-full h-full object-cover"
-            />
+            /> -->
             <div class="absolute inset-0 bg-gradient-to-r from-rose-500/20 to-purple-600/20"></div>
           </div>
           <div 

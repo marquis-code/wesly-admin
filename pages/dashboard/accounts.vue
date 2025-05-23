@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen px-4 sm:px-6 lg:px-8">
+  <div class="min-h-screen">
     <div class="max-w-7xl mx-auto">
       <!-- Header with animation -->
       <div class="text-start mb-10 reveal-animation">
@@ -303,7 +303,7 @@
                             >
                               Preview
                             </button>
-                            <button 
+                            <!-- <button 
                               @click="downloadDocument(document)"
                               class="text-purple-600 hover:text-purple-800 transition-colors duration-200"
                               :disabled="isDownloading === document.id"
@@ -316,7 +316,7 @@
                                 Downloading...
                               </span>
                               <span v-else>Download</span>
-                            </button>
+                            </button> -->
                           </td>
                         </tr>
                       </tbody>
@@ -468,7 +468,7 @@
                     <p class="text-xs text-red-600 whitespace-pre-wrap">{{ getSimplifiedReason(previewingDocument.reason) }}</p>
                   </div>
                   
-                  <div class="mt-6 flex justify-end">
+                  <!-- <div class="mt-6 flex justify-end">
                     <button 
                       @click="downloadDocument(previewingDocument)"
                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 transition-all duration-300"
@@ -488,7 +488,7 @@
                         Download as Excel
                       </span>
                     </button>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>

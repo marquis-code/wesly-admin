@@ -135,7 +135,7 @@
       <!-- API Keys Sections -->
       <div class="space-y-6">
         <!-- Base URL -->
-        <div v-if="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 400ms">
+        <div v-show="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 400ms">
           <div class="flex items-center justify-between bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <div class="flex items-center">
               <h3 class="text-lg font-medium text-gray-900">Base URL</h3>
@@ -168,7 +168,7 @@
         </div>
 
         <!-- Client Credentials Section -->
-        <div v-if="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 500ms">
+        <div v-show="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 500ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">Client Credentials</h3>
           </div>
@@ -272,7 +272,7 @@
         </div>
 
         <!-- Institution Details Section -->
-        <div v-if="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 600ms">
+        <div v-show="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 600ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">Institution Details</h3>
           </div>
@@ -368,7 +368,6 @@
         </div>
 
         <!-- GL Accounts Section -->
-         <!-- {{activeProvider}} -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 700ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">GL Accounts</h3>
@@ -710,7 +709,16 @@ const activeEnvironmentPosition = ref(0)
 const activeEnvironmentWidth = ref(0)
 
 // Grouped API keys
-const groupedKeys = ref<GroupedApiKeys>({})
+const groupedKeys = ref<GroupedApiKeys>({
+  easyPay: {
+    staging: {},
+    live: {}
+  },
+  nip: {
+    staging: {},
+    live: {}
+  }
+})
 
 // Visibility toggles for sensitive keys
 const showKey = ref({
@@ -755,6 +763,17 @@ onMounted(() => {
     console.log('Grouped keys:', groupedKeys.value)
   } else {
     console.error('No API keys received or empty array')
+    // Initialize with empty structure to prevent undefined errors
+    groupedKeys.value = {
+      easyPay: {
+        staging: {},
+        live: {}
+      },
+      nip: {
+        staging: {},
+        live: {}
+      }
+    }
   }
   
   // Initialize tab indicators
@@ -766,7 +785,17 @@ onMounted(() => {
 
 // Function to group API keys by provider and environment
 const groupApiKeys = (keys: ApiKey[]): GroupedApiKeys => {
-  const grouped: GroupedApiKeys = {}
+  // Initialize with empty structure to prevent undefined errors
+  const grouped: GroupedApiKeys = {
+    easyPay: {
+      staging: {},
+      live: {}
+    },
+    nip: {
+      staging: {},
+      live: {}
+    }
+  }
   
   console.log('Grouping API keys:', keys)
   
@@ -801,15 +830,6 @@ const groupApiKeys = (keys: ApiKey[]): GroupedApiKeys => {
     } else {
       console.warn(`Skipping key with unknown provider: ${fullProvider}`)
       return // Skip if not matching expected format
-    }
-    
-    // Initialize nested objects if they don't exist
-    if (!grouped[provider]) {
-      grouped[provider] = {}
-    }
-    
-    if (!grouped[provider][environment]) {
-      grouped[provider][environment] = {}
     }
     
     // Add the key-value pair
@@ -883,6 +903,7 @@ const animateElements = () => {
 
 // Helper functions
 const getKeyValue = (keyName: string): string => {
+  // Ensure the provider and environment exist in the grouped keys
   if (!groupedKeys.value[activeProvider.value]) {
     console.warn(`Provider not found: ${activeProvider.value}`)
     return ""
@@ -893,12 +914,8 @@ const getKeyValue = (keyName: string): string => {
     return ""
   }
   
-  if (!groupedKeys.value[activeProvider.value][activeEnvironment.value][keyName]) {
-    console.warn(`Key not found: ${keyName} for provider ${activeProvider.value} and environment ${activeEnvironment.value}`)
-    return ""
-  }
-  
-  return groupedKeys.value[activeProvider.value][activeEnvironment.value][keyName]
+  // Return the key value or an empty string if not found
+  return groupedKeys.value[activeProvider.value][activeEnvironment.value][keyName] || ""
 }
 
 const getLastUpdated = (): string => {
@@ -913,6 +930,8 @@ const getLastUpdated = (): string => {
 
 const maskKey = (key: string): string => {
   if (!key) return ''
+  if (key.length <= 12) return '••••••••••••'
+  
   const prefix = key.substring(0, 8)
   const suffix = key.substring(key.length - 4)
   return `${prefix}${'•'.repeat(10)}${suffix}`
@@ -951,6 +970,7 @@ const closeEditKeyModal = (): void => {
 }
 
 const updateKey = (): void => {
+  // Ensure the provider and environment objects exist
   if (!groupedKeys.value[activeProvider.value]) {
     groupedKeys.value[activeProvider.value] = {}
   }
@@ -988,6 +1008,15 @@ const regenerateKey = (): void => {
     newKey = `${prefix}_${env}_auth_${randomSuffix}`
   }
   
+  // Ensure the provider and environment objects exist
+  if (!groupedKeys.value[activeProvider.value]) {
+    groupedKeys.value[activeProvider.value] = {}
+  }
+  
+  if (!groupedKeys.value[activeProvider.value][activeEnvironment.value]) {
+    groupedKeys.value[activeProvider.value][activeEnvironment.value] = {}
+  }
+  
   groupedKeys.value[activeProvider.value][activeEnvironment.value][regenerateKeyName.value] = newKey
   hasUnsavedChanges.value = true
   
@@ -1012,6 +1041,15 @@ const saveChanges = async (): Promise<void> => {
   try {
     // Create an array of updated keys in the format expected by the backend
     const updatedKeys: ApiKey[] = []
+    
+    // Ensure the provider and environment objects exist
+    if (!groupedKeys.value[activeProvider.value]) {
+      groupedKeys.value[activeProvider.value] = {}
+    }
+    
+    if (!groupedKeys.value[activeProvider.value][activeEnvironment.value]) {
+      groupedKeys.value[activeProvider.value][activeEnvironment.value] = {}
+    }
     
     Object.entries(groupedKeys.value[activeProvider.value][activeEnvironment.value]).forEach(([key, value]) => {
       if (key !== 'lastUpdated') {
