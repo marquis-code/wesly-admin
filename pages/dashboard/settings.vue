@@ -1,5 +1,6 @@
 <template>
   <section>
+    <!-- {{ credentials }} -->
     <div v-if="!loading">
       <ApiKeysManagement :apiKeys="credentials" />
     </div>

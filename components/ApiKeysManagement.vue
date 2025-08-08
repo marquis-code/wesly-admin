@@ -1,9 +1,10 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-rose-50 to-purple-50 p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
-      <!-- Header with animation -->
+       <!-- Header with animation 
+      {{ apiKeys }} -->
       <div class="text-center mb-8 fade-in-up">
-        <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600">
+        <h1 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600">
           API Keys Management
         </h1>
         <p class="mt-3 text-gray-600">
@@ -11,20 +12,20 @@
         </p>
       </div>
 
-      <!-- Provider Tabs -->
+       <!-- Provider Tabs  -->
       <div class="mb-8 fade-in-up" style="animation-delay: 100ms">
         <div class="flex justify-center">
           <div class="bg-white rounded-full shadow-md p-1 inline-flex relative">
-            <!-- Tab indicator -->
+             <!-- Tab indicator  -->
             <div 
               class="absolute top-1 bottom-1 rounded-full bg-gradient-to-r from-rose-500 to-purple-600 transition-all duration-300 ease-out tab-indicator"
-              :style="{ 
-                left: activeProviderPosition + 'px', 
-                width: activeProviderWidth + 'px' 
+              :style="{
+                left: activeProviderPosition + 'px',
+                width: activeProviderWidth + 'px'
               }"
             ></div>
-            
-            <!-- NIP Tab -->
+
+             <!-- NIP Tab  -->
             <button 
               ref="nipTabRef"
               @click="handleProviderChange('nip')"
@@ -36,8 +37,8 @@
                 <span>NIP</span>
               </div>
             </button>
-            
-            <!-- Easy Pay Tab -->
+
+             <!-- Easy Pay Tab  -->
             <button 
               ref="easyPayTabRef"
               @click="handleProviderChange('easyPay')"
@@ -49,24 +50,37 @@
                 <span>Easy Pay</span>
               </div>
             </button>
+
+             <!-- Afrigo Tab  -->
+            <button 
+              ref="afrigoTabRef"
+              @click="handleProviderChange('afrigo')"
+              class="relative z-10 px-6 py-2 rounded-full text-sm font-medium transition-all duration-300"
+              :class="activeProvider === 'afrigo' ? 'text-white' : 'text-gray-700 hover:text-gray-900'"
+            >
+              <div class="flex items-center">
+                <ShieldIcon class="w-4 h-4 mr-2" />
+                <span>Afrigo</span>
+              </div>
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Environment Tabs -->
+       <!-- Environment Tabs  -->
       <div class="mb-8 fade-in-up" style="animation-delay: 200ms">
         <div class="flex justify-center">
           <div class="bg-white rounded-full shadow-md p-1 inline-flex relative">
-            <!-- Tab indicator -->
+             <!-- Tab indicator  -->
             <div 
               class="absolute top-1 bottom-1 rounded-full bg-gradient-to-r from-rose-400 to-purple-500 transition-all duration-300 ease-out tab-indicator"
-              :style="{ 
-                left: activeEnvironmentPosition + 'px', 
-                width: activeEnvironmentWidth + 'px' 
+              :style="{
+                left: activeEnvironmentPosition + 'px',
+                width: activeEnvironmentWidth + 'px'
               }"
             ></div>
-            
-            <!-- Staging Tab -->
+
+             <!-- Staging Tab  -->
             <button 
               ref="stagingTabRef"
               @click="handleEnvironmentChange('staging')"
@@ -78,8 +92,8 @@
                 <span>Staging</span>
               </div>
             </button>
-            
-            <!-- Live Tab -->
+
+             <!-- Live Tab  -->
             <button 
               ref="liveTabRef"
               @click="handleEnvironmentChange('live')"
@@ -95,31 +109,9 @@
         </div>
       </div>
 
-      <!-- Quick Actions -->
+       <!-- Quick Actions  -->
       <div class="mb-8 fade-in-up" style="animation-delay: 300ms">
         <div class="flex flex-wrap justify-center gap-3">
-          <!-- <button 
-            @click="openPasswordModal" 
-            class="inline-flex items-center px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 hover:text-rose-600 shadow-sm hover:shadow transition-all duration-200 scale-hover"
-          >
-            <LockIcon class="w-4 h-4 mr-2" />
-            <span>Update Password</span>
-          </button> -->
-<!--           
-          <button 
-            class="inline-flex items-center px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 hover:text-purple-600 shadow-sm hover:shadow transition-all duration-200 scale-hover"
-          >
-            <LinkIcon class="w-4 h-4 mr-2" />
-            <span>Show API URLs</span>
-          </button>
-          
-          <button 
-            class="inline-flex items-center px-4 py-2 bg-white rounded-full text-sm font-medium text-gray-700 hover:text-rose-600 shadow-sm hover:shadow transition-all duration-200 scale-hover"
-          >
-            <KeyIcon class="w-4 h-4 mr-2" />
-            <span>JWT Public Key</span>
-          </button> -->
-          
           <button 
             @click="openSaveChangesModal" 
             class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-rose-500 to-purple-600 rounded-full text-sm font-medium text-white shadow-md hover:shadow-lg transition-all duration-200 scale-hover"
@@ -132,9 +124,9 @@
         </div>
       </div>
 
-      <!-- API Keys Sections -->
+       <!-- API Keys Sections  -->
       <div class="space-y-6">
-        <!-- Base URL -->
+         <!-- Base URL (Easy Pay only)  -->
         <div v-show="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 400ms">
           <div class="flex items-center justify-between bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <div class="flex items-center">
@@ -155,9 +147,7 @@
           </div>
           <div class="p-6">
             <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-              <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                {{ getKeyValue('baseUrl') }}
-              </div>
+              <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('baseUrl') }}</div>
               <div class="flex items-center space-x-2">
                 <button @click="copyKey('baseUrl')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
                   <Copy class="w-5 h-5" />
@@ -167,13 +157,44 @@
           </div>
         </div>
 
-        <!-- Client Credentials Section -->
+         <!-- Afrigo URL (Afrigo only)  -->
+        <div v-show="activeProvider === 'afrigo'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 400ms">
+          <div class="flex items-center justify-between bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
+            <div class="flex items-center">
+              <h3 class="text-lg font-medium text-gray-900">API URL</h3>
+              <div class="relative ml-2 group">
+                <HelpCircleIcon class="w-5 h-5 text-gray-400 cursor-help" />
+                <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-sm rounded-md p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                  <div class="absolute left-0 bottom-[-6px] transform translate-x-1 rotate-45 w-3 h-3 bg-gray-900"></div>
+                  The API URL for Afrigo card management system requests.
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button @click="openEditKeyModal('url')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                <PencilIcon class="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
+              <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('url') }}</div>
+              <div class="flex items-center space-x-2">
+                <button @click="copyKey('url')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                  <Copy class="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+         <!-- Client Credentials Section (Easy Pay only)  -->
         <div v-show="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 500ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">Client Credentials</h3>
           </div>
           <div class="p-6 space-y-6">
-            <!-- Client ID -->
+             <!-- Client ID  -->
             <div class="credential-item">
               <div class="flex items-center mb-2">
                 <h4 class="text-sm font-medium text-gray-700">Client ID</h4>
@@ -186,9 +207,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                  {{ showKey.clientId ? getKeyValue('clientId') : maskKey(getKeyValue('clientId')) }}
-                </div>
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ showKey.clientId ? getKeyValue('clientId') : maskKey(getKeyValue('clientId')) }}</div>
                 <div class="flex items-center space-x-2">
                   <button @click="toggleKeyVisibility('clientId')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
                     <Eye v-if="!showKey.clientId" class="w-5 h-5" />
@@ -204,7 +223,7 @@
               </div>
             </div>
 
-            <!-- Client Secret -->
+             <!-- Client Secret  -->
             <div class="credential-item">
               <div class="flex items-center mb-2">
                 <h4 class="text-sm font-medium text-gray-700">Client Secret</h4>
@@ -217,9 +236,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                  {{ showKey.clientSecret ? getKeyValue('clientSecret') : maskKey(getKeyValue('clientSecret')) }}
-                </div>
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ showKey.clientSecret ? getKeyValue('clientSecret') : maskKey(getKeyValue('clientSecret')) }}</div>
                 <div class="flex items-center space-x-2">
                   <button @click="toggleKeyVisibility('clientSecret')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
                     <Eye v-if="!showKey.clientSecret" class="w-5 h-5" />
@@ -238,7 +255,7 @@
               </div>
             </div>
 
-            <!-- Client Code -->
+             <!-- Client Code  -->
             <div class="credential-item">
               <div class="flex items-center mb-2">
                 <h4 class="text-sm font-medium text-gray-700">Client Code</h4>
@@ -251,9 +268,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                  {{ showKey.clientCode ? getKeyValue('clientCode') : maskKey(getKeyValue('clientCode')) }}
-                </div>
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ showKey.clientCode ? getKeyValue('clientCode') : maskKey(getKeyValue('clientCode')) }}</div>
                 <div class="flex items-center space-x-2">
                   <button @click="toggleKeyVisibility('clientCode')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
                     <Eye v-if="!showKey.clientCode" class="w-5 h-5" />
@@ -271,13 +286,107 @@
           </div>
         </div>
 
-        <!-- Institution Details Section -->
+         <!-- Afrigo Security Credentials  -->
+        <div v-show="activeProvider === 'afrigo'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 500ms">
+          <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-medium text-gray-900">Security Credentials</h3>
+          </div>
+          <div class="p-6 space-y-6">
+             <!-- AES Key  -->
+            <div class="credential-item">
+              <div class="flex items-center mb-2">
+                <h4 class="text-sm font-medium text-gray-700">AES Key</h4>
+                <div class="relative ml-2 group">
+                  <HelpCircleIcon class="w-4 h-4 text-gray-400 cursor-help" />
+                  <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-sm rounded-md p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                    <div class="absolute left-0 bottom-[-6px] transform translate-x-1 rotate-45 w-3 h-3 bg-gray-900"></div>
+                    AES encryption key used for securing data transmission. Keep this highly confidential.
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ showKey.aeskey ? getKeyValue('aeskey') : maskKey(getKeyValue('aeskey')) }}</div>
+                <div class="flex items-center space-x-2">
+                  <button @click="toggleKeyVisibility('aeskey')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <Eye v-if="!showKey.aeskey" class="w-5 h-5" />
+                    <EyeOff v-else class="w-5 h-5" />
+                  </button>
+                  <button @click="copyKey('aeskey')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                    <Copy class="w-5 h-5" />
+                  </button>
+                  <button @click="openEditKeyModal('aeskey')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <PencilIcon class="w-5 h-5" />
+                  </button>
+                  <button @click="openRegenerateKeyModal('aeskey')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                    <RefreshCw class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+             <!-- Public Key  -->
+            <div class="credential-item">
+              <div class="flex items-center mb-2">
+                <h4 class="text-sm font-medium text-gray-700">RSA Public Key</h4>
+                <div class="relative ml-2 group">
+                  <HelpCircleIcon class="w-4 h-4 text-gray-400 cursor-help" />
+                  <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-sm rounded-md p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                    <div class="absolute left-0 bottom-[-6px] transform translate-x-1 rotate-45 w-3 h-3 bg-gray-900"></div>
+                    RSA public key used for asymmetric encryption and digital signatures.
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ showKey.public ? getKeyValue('public') : maskKey(getKeyValue('public')) }}</div>
+                <div class="flex items-center space-x-2">
+                  <button @click="toggleKeyVisibility('public')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <Eye v-if="!showKey.public" class="w-5 h-5" />
+                    <EyeOff v-else class="w-5 h-5" />
+                  </button>
+                  <button @click="copyKey('public')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                    <Copy class="w-5 h-5" />
+                  </button>
+                  <button @click="openEditKeyModal('public')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <PencilIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+             <!-- IV  -->
+            <div class="credential-item">
+              <div class="flex items-center mb-2">
+                <h4 class="text-sm font-medium text-gray-700">Initialization Vector (IV)</h4>
+                <div class="relative ml-2 group">
+                  <HelpCircleIcon class="w-4 h-4 text-gray-400 cursor-help" />
+                  <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-sm rounded-md p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                    <div class="absolute left-0 bottom-[-6px] transform translate-x-1 rotate-45 w-3 h-3 bg-gray-900"></div>
+                    Initialization vector used with AES encryption for added security.
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('IV') }}</div>
+                <div class="flex items-center space-x-2">
+                  <button @click="copyKey('IV')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                    <Copy class="w-5 h-5" />
+                  </button>
+                  <button @click="openEditKeyModal('IV')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <PencilIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+         <!-- Institution Details Section (Easy Pay only)  -->
         <div v-show="activeProvider === 'easyPay'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 600ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">Institution Details</h3>
           </div>
           <div class="p-6 space-y-6">
-            <!-- Institution Code -->
+             <!-- Institution Code  -->
             <div class="credential-item">
               <div class="flex items-center mb-2">
                 <h4 class="text-sm font-medium text-gray-700">Institution Code</h4>
@@ -290,9 +399,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                  {{ getKeyValue('institutionCode') }}
-                </div>
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('institutionCode') }}</div>
                 <div class="flex items-center space-x-2">
                   <button @click="copyKey('institutionCode')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
                     <Copy class="w-5 h-5" />
@@ -304,7 +411,7 @@
               </div>
             </div>
 
-            <!-- Biller ID -->
+             <!-- Biller ID  -->
             <div class="credential-item">
               <div class="flex items-center mb-2">
                 <h4 class="text-sm font-medium text-gray-700">Biller ID</h4>
@@ -317,9 +424,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                  {{ getKeyValue('billerid') }}
-                </div>
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('billerid') }}</div>
                 <div class="flex items-center space-x-2">
                   <button @click="copyKey('billerid')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
                     <Copy class="w-5 h-5" />
@@ -331,7 +436,7 @@
               </div>
             </div>
 
-            <!-- Authorization Code -->
+             <!-- Authorization Code  -->
             <div class="credential-item">
               <div class="flex items-center mb-2">
                 <h4 class="text-sm font-medium text-gray-700">Authorization Code</h4>
@@ -344,9 +449,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                  {{ showKey.authorizationcode ? getKeyValue('authorizationcode') : maskKey(getKeyValue('authorizationcode')) }}
-                </div>
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ showKey.authorizationcode ? getKeyValue('authorizationcode') : maskKey(getKeyValue('authorizationcode')) }}</div>
                 <div class="flex items-center space-x-2">
                   <button @click="toggleKeyVisibility('authorizationcode')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
                     <Eye v-if="!showKey.authorizationcode" class="w-5 h-5" />
@@ -367,13 +470,121 @@
           </div>
         </div>
 
-        <!-- GL Accounts Section -->
+         <!-- Afrigo Institution Details  -->
+        <div v-show="activeProvider === 'afrigo'" class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 600ms">
+          <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
+            <h3 class="text-lg font-medium text-gray-900">Institution Details</h3>
+          </div>
+          <div class="p-6 space-y-6">
+             <!-- Institution ID  -->
+            <div class="credential-item">
+              <div class="flex items-center mb-2">
+                <h4 class="text-sm font-medium text-gray-700">Institution ID</h4>
+                <div class="relative ml-2 group">
+                  <HelpCircleIcon class="w-4 h-4 text-gray-400 cursor-help" />
+                  <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-sm rounded-md p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                    <div class="absolute left-0 bottom-[-6px] transform translate-x-1 rotate-45 w-3 h-3 bg-gray-900"></div>
+                    Unique identifier for your institution in the Afrigo card management system.
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('institutionid') }}</div>
+                <div class="flex items-center space-x-2">
+                  <button @click="copyKey('institutionid')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                    <Copy class="w-5 h-5" />
+                  </button>
+                  <button @click="openEditKeyModal('institutionid')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <PencilIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+             <!-- BIN  -->
+            <div class="credential-item">
+              <div class="flex items-center mb-2">
+                <h4 class="text-sm font-medium text-gray-700">Bank Identification Number (BIN)</h4>
+                <div class="relative ml-2 group">
+                  <HelpCircleIcon class="w-4 h-4 text-gray-400 cursor-help" />
+                  <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-sm rounded-md p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                    <div class="absolute left-0 bottom-[-6px] transform translate-x-1 rotate-45 w-3 h-3 bg-gray-900"></div>
+                    Bank Identification Number used for card transactions and routing.
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('bin') }}</div>
+                <div class="flex items-center space-x-2">
+                  <button @click="copyKey('bin')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                    <Copy class="w-5 h-5" />
+                  </button>
+                  <button @click="openEditKeyModal('bin')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <PencilIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+             <!-- Operator  -->
+            <div class="credential-item">
+              <div class="flex items-center mb-2">
+                <h4 class="text-sm font-medium text-gray-700">Operator Code</h4>
+                <div class="relative ml-2 group">
+                  <HelpCircleIcon class="w-4 h-4 text-gray-400 cursor-help" />
+                  <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-sm rounded-md p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                    <div class="absolute left-0 bottom-[-6px] transform translate-x-1 rotate-45 w-3 h-3 bg-gray-900"></div>
+                    Operator code for system identification and routing.
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('operator') }}</div>
+                <div class="flex items-center space-x-2">
+                  <button @click="copyKey('operator')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                    <Copy class="w-5 h-5" />
+                  </button>
+                  <button @click="openEditKeyModal('operator')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <PencilIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+             <!-- Card Delivery Account  -->
+            <div class="credential-item">
+              <div class="flex items-center mb-2">
+                <h4 class="text-sm font-medium text-gray-700">Card Delivery Account</h4>
+                <div class="relative ml-2 group">
+                  <HelpCircleIcon class="w-4 h-4 text-gray-400 cursor-help" />
+                  <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-sm rounded-md p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-10">
+                    <div class="absolute left-0 bottom-[-6px] transform translate-x-1 rotate-45 w-3 h-3 bg-gray-900"></div>
+                    Account number used for card delivery and related transactions.
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('card-delivery-account') }}</div>
+                <div class="flex items-center space-x-2">
+                  <button @click="copyKey('card-delivery-account')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
+                    <Copy class="w-5 h-5" />
+                  </button>
+                  <button @click="openEditKeyModal('card-delivery-account')" class="text-gray-500 hover:text-rose-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-rose-50">
+                    <PencilIcon class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+         <!-- GL Accounts Section  -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden card-animation" style="animation-delay: 700ms">
           <div class="bg-gradient-to-r from-rose-50 to-purple-50 px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-medium text-gray-900">GL Accounts</h3>
           </div>
           <div class="p-6 space-y-6">
-            <!-- GL Credit -->
+             <!-- GL Credit  -->
             <div class="credential-item">
               <div class="flex items-center mb-2">
                 <h4 class="text-sm font-medium text-gray-700">GL Credit</h4>
@@ -386,9 +597,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                  {{ getKeyValue('glCredit') }}
-                </div>
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('glCredit') }}</div>
                 <div class="flex items-center space-x-2">
                   <button @click="copyKey('glCredit')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
                     <Copy class="w-5 h-5" />
@@ -400,7 +609,7 @@
               </div>
             </div>
 
-            <!-- GL Debit -->
+             <!-- GL Debit  -->
             <div class="credential-item">
               <div class="flex items-center mb-2">
                 <h4 class="text-sm font-medium text-gray-700">GL Debit</h4>
@@ -413,9 +622,7 @@
                 </div>
               </div>
               <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-md p-4">
-                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">
-                  {{ getKeyValue('glDebit') }}
-                </div>
+                <div class="font-mono text-sm text-gray-800 overflow-hidden overflow-ellipsis">{{ getKeyValue('glDebit') }}</div>
                 <div class="flex items-center space-x-2">
                   <button @click="copyKey('glDebit')" class="text-gray-500 hover:text-purple-600 transition-all duration-200 ease-in-out p-1 rounded-full hover:bg-purple-50">
                     <Copy class="w-5 h-5" />
@@ -429,7 +636,7 @@
           </div>
         </div>
 
-        <!-- Warning Message -->
+         <!-- Warning Message  -->
         <div class="flex items-start p-4 bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-xl mb-8 card-animation" style="animation-delay: 800ms">
           <AlertTriangleIcon class="w-5 h-5 text-amber-500 mr-3 flex-shrink-0 mt-0.5" />
           <span class="text-amber-800">Never share your secret keys with anyone. Our support team will never ask for your secret keys.</span>
@@ -437,7 +644,7 @@
       </div>
     </div>
 
-    <!-- Edit Key Modal -->
+     <!-- Edit Key Modal  -->
     <Teleport to="body">
       <div v-if="editKeyModal" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"></div>
@@ -446,10 +653,9 @@
             <h3 class="text-lg font-medium text-gray-900 mb-4">
               Edit {{ editKeyName }}
             </h3>
-            
             <div class="mb-4">
               <label for="keyValue" class="block text-sm font-medium text-gray-700 mb-1">
-                {{ activeProvider === 'nip' ? 'NIP' : 'Easy Pay' }} {{ activeEnvironment === 'staging' ? 'Staging' : 'Live' }} {{ editKeyName }}
+                {{ getProviderDisplayName() }} {{ activeEnvironment === 'staging' ? 'Staging' : 'Live' }} {{ editKeyName }}
               </label>
               <input 
                 type="text" 
@@ -459,12 +665,8 @@
                 placeholder="Enter key value"
               />
             </div>
-            
             <div class="flex justify-end space-x-3">
-              <button 
-                @click="closeEditKeyModal" 
-                class="px-4 py-2 text-gray-700 hover:text-gray-900 transition-all duration-200 ease-in-out"
-              >
+              <button @click="closeEditKeyModal" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition-all duration-200 ease-in-out">
                 Cancel
               </button>
               <button 
@@ -481,7 +683,7 @@
       </div>
     </Teleport>
 
-    <!-- Regenerate Key Modal -->
+     <!-- Regenerate Key Modal  -->
     <Teleport to="body">
       <div v-if="regenerateKeyModal" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"></div>
@@ -489,21 +691,14 @@
           <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all modal-animation">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Regenerate {{ regenerateKeyName }}</h3>
             <p class="text-gray-600 mb-4">
-              Are you sure you want to regenerate the {{ activeProvider === 'nip' ? 'NIP' : 'Easy Pay' }} {{ activeEnvironment === 'staging' ? 'Staging' : 'Live' }} {{ regenerateKeyName }}? 
+              Are you sure you want to regenerate the {{ getProviderDisplayName() }} {{ activeEnvironment === 'staging' ? 'Staging' : 'Live' }} {{ regenerateKeyName }}? 
               This action cannot be undone and will invalidate the current key.
             </p>
-            
             <div class="flex justify-end space-x-3">
-              <button 
-                @click="closeRegenerateKeyModal" 
-                class="px-4 py-2 text-gray-700 hover:text-gray-900 transition-all duration-200 ease-in-out"
-              >
+              <button @click="closeRegenerateKeyModal" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition-all duration-200 ease-in-out">
                 Cancel
               </button>
-              <button 
-                @click="regenerateKey" 
-                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all duration-200 ease-in-out"
-              >
+              <button @click="regenerateKey" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all duration-200 ease-in-out">
                 Regenerate
               </button>
             </div>
@@ -512,7 +707,7 @@
       </div>
     </Teleport>
 
-    <!-- Save Changes Modal -->
+     <!-- Save Changes Modal  -->
     <Teleport to="body">
       <div v-if="saveChangesModal" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"></div>
@@ -520,20 +715,13 @@
           <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all modal-animation">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Save Changes</h3>
             <p class="text-gray-600 mb-4">
-              Are you sure you want to save changes to the {{ activeProvider === 'nip' ? 'NIP' : 'Easy Pay' }} {{ activeEnvironment === 'staging' ? 'Staging' : 'Live' }} API keys?
+              Are you sure you want to save changes to the {{ getProviderDisplayName() }} {{ activeEnvironment === 'staging' ? 'Staging' : 'Live' }} API keys?
             </p>
-            
             <div class="flex justify-end space-x-3">
-              <button 
-                @click="closeSaveChangesModal" 
-                class="px-4 py-2 text-gray-700 hover:text-gray-900 transition-all duration-200 ease-in-out"
-              >
+              <button @click="closeSaveChangesModal" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition-all duration-200 ease-in-out">
                 Cancel
               </button>
-              <button 
-                @click="saveChanges" 
-                class="px-4 py-2 bg-gradient-to-r from-rose-500 to-purple-600 text-white rounded-md hover:from-rose-600 hover:to-purple-700 transition-all duration-200 ease-in-out"
-              >
+              <button @click="saveChanges" class="px-4 py-2 bg-gradient-to-r from-rose-500 to-purple-600 text-white rounded-md hover:from-rose-600 hover:to-purple-700 transition-all duration-200 ease-in-out">
                 Save
               </button>
             </div>
@@ -542,14 +730,13 @@
       </div>
     </Teleport>
 
-    <!-- Password Update Modal -->
+     <!-- Password Update Modal  -->
     <Teleport to="body">
       <div v-if="passwordModal" class="fixed inset-0 z-50 overflow-y-auto">
         <div class="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"></div>
         <div class="flex min-h-full items-center justify-center p-4">
           <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-xl transition-all modal-animation">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Update Password</h3>
-            
             <div class="space-y-4">
               <div>
                 <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-1">
@@ -562,11 +749,8 @@
                   class="w-full px-3 py-3 border border-gray-300 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm text-gray-800 placeholder-gray-500"
                   placeholder="Enter current password"
                 />
-                <p v-if="passwordErrors.currentPassword" class="mt-1 text-sm text-red-600">
-                  {{ passwordErrors.currentPassword }}
-                </p>
+                <p v-if="passwordErrors.currentPassword" class="mt-1 text-sm text-red-600">{{ passwordErrors.currentPassword }}</p>
               </div>
-              
               <div>
                 <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-1">
                   New Password
@@ -578,11 +762,8 @@
                   class="w-full px-3 py-3 border border-gray-300 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm text-gray-800 placeholder-gray-500"
                   placeholder="Enter new password"
                 />
-                <p v-if="passwordErrors.newPassword" class="mt-1 text-sm text-red-600">
-                  {{ passwordErrors.newPassword }}
-                </p>
+                <p v-if="passwordErrors.newPassword" class="mt-1 text-sm text-red-600">{{ passwordErrors.newPassword }}</p>
               </div>
-              
               <div>
                 <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">
                   Confirm New Password
@@ -594,17 +775,11 @@
                   class="w-full px-3 py-3 border border-gray-300 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 text-sm text-gray-800 placeholder-gray-500"
                   placeholder="Confirm new password"
                 />
-                <p v-if="passwordErrors.confirmPassword" class="mt-1 text-sm text-red-600">
-                  {{ passwordErrors.confirmPassword }}
-                </p>
+                <p v-if="passwordErrors.confirmPassword" class="mt-1 text-sm text-red-600">{{ passwordErrors.confirmPassword }}</p>
               </div>
             </div>
-            
             <div class="flex justify-end space-x-3 mt-6">
-              <button 
-                @click="closePasswordModal" 
-                class="px-4 py-2 text-gray-700 hover:text-gray-900 transition-all duration-200 ease-in-out"
-              >
+              <button @click="closePasswordModal" class="px-4 py-2 text-gray-700 hover:text-gray-900 transition-all duration-200 ease-in-out">
                 Cancel
               </button>
               <button 
@@ -622,12 +797,9 @@
       </div>
     </Teleport>
 
-    <!-- Success Toast -->
+     <!-- Success Toast  -->
     <Teleport to="body">
-      <div 
-        v-if="showToast" 
-        class="fixed bottom-4 right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center toast-animation"
-      >
+      <div v-if="showToast" class="fixed bottom-4 right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center toast-animation">
         <CheckIcon class="w-5 h-5 mr-2" />
         <span>{{ toastMessage }}</span>
       </div>
@@ -643,6 +815,7 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { 
   ServerIcon, 
   CreditCardIcon, 
+  ShieldIcon,
   HelpCircleIcon,
   Eye, 
   EyeOff, 
@@ -701,8 +874,10 @@ const activeEnvironment = ref('staging')
 // Tab position tracking
 const nipTabRef = ref<HTMLElement | null>(null)
 const easyPayTabRef = ref<HTMLElement | null>(null)
+const afrigoTabRef = ref<HTMLElement | null>(null)
 const stagingTabRef = ref<HTMLElement | null>(null)
 const liveTabRef = ref<HTMLElement | null>(null)
+
 const activeProviderPosition = ref(0)
 const activeProviderWidth = ref(0)
 const activeEnvironmentPosition = ref(0)
@@ -717,6 +892,10 @@ const groupedKeys = ref<GroupedApiKeys>({
   nip: {
     staging: {},
     live: {}
+  },
+  afrigo: {
+    staging: {},
+    live: {}
   }
 })
 
@@ -725,7 +904,9 @@ const showKey = ref({
   clientId: false,
   clientSecret: false,
   clientCode: false,
-  authorizationcode: false
+  authorizationcode: false,
+  aeskey: false,
+  public: false
 })
 
 // Modal states
@@ -772,13 +953,16 @@ onMounted(() => {
       nip: {
         staging: {},
         live: {}
+      },
+      afrigo: {
+        staging: {},
+        live: {}
       }
     }
   }
-  
+
   // Initialize tab indicators
   updateTabIndicators()
-  
   // Add animation classes to elements
   animateElements()
 })
@@ -794,27 +978,30 @@ const groupApiKeys = (keys: ApiKey[]): GroupedApiKeys => {
     nip: {
       staging: {},
       live: {}
+    },
+    afrigo: {
+      staging: {},
+      live: {}
     }
   }
-  
+
   console.log('Grouping API keys:', keys)
   
   keys.forEach(item => {
     // Parse the key to extract provider, environment, and actual key name
     const keyParts = item.key.split('.')
-    
     if (keyParts.length !== 2) {
       console.warn(`Skipping key with unexpected format: ${item.key}`)
       return
     }
-    
+
     const fullProvider = keyParts[0]
     const keyName = keyParts[1]
-    
+
     // Determine provider and environment
     let provider: string
     let environment: string
-    
+
     if (fullProvider === "easypay") {
       provider = "easyPay"
       environment = "live"
@@ -827,22 +1014,28 @@ const groupApiKeys = (keys: ApiKey[]): GroupedApiKeys => {
     } else if (fullProvider === "nip-staging") {
       provider = "nip"
       environment = "staging"
+    } else if (fullProvider === "afrigo") {
+      provider = "afrigo"
+      environment = "live"
+    } else if (fullProvider === "afrigo-staging") {
+      provider = "afrigo"
+      environment = "staging"
     } else {
       console.warn(`Skipping key with unknown provider: ${fullProvider}`)
       return // Skip if not matching expected format
     }
-    
+
     // Add the key-value pair
     grouped[provider][environment][keyName] = item.value
   })
-  
+
   // Add lastUpdated field to each environment
   Object.keys(grouped).forEach(provider => {
     Object.keys(grouped[provider]).forEach(env => {
       grouped[provider][env].lastUpdated = new Date().toISOString().split('T')[0]
     })
   })
-  
+
   return grouped
 }
 
@@ -853,7 +1046,6 @@ watch([activeProvider, activeEnvironment], () => {
       hasUnsavedChanges.value = false
     }
   }
-  
   // Update tab indicators after state change
   nextTick(() => {
     updateTabIndicators()
@@ -870,8 +1062,11 @@ const updateTabIndicators = () => {
     } else if (activeProvider.value === 'easyPay' && easyPayTabRef.value) {
       activeProviderPosition.value = easyPayTabRef.value.offsetLeft
       activeProviderWidth.value = easyPayTabRef.value.offsetWidth
+    } else if (activeProvider.value === 'afrigo' && afrigoTabRef.value) {
+      activeProviderPosition.value = afrigoTabRef.value.offsetLeft
+      activeProviderWidth.value = afrigoTabRef.value.offsetWidth
     }
-    
+
     // Environment tabs
     if (activeEnvironment.value === 'staging' && stagingTabRef.value) {
       activeEnvironmentPosition.value = stagingTabRef.value.offsetLeft
@@ -892,7 +1087,7 @@ const animateElements = () => {
       el.classList.add('visible')
     }, 100 + index * 100)
   })
-  
+
   const cardElements = document.querySelectorAll('.card-animation')
   cardElements.forEach((el, index) => {
     setTimeout(() => {
@@ -908,30 +1103,37 @@ const getKeyValue = (keyName: string): string => {
     console.warn(`Provider not found: ${activeProvider.value}`)
     return ""
   }
-  
   if (!groupedKeys.value[activeProvider.value][activeEnvironment.value]) {
     console.warn(`Environment not found: ${activeEnvironment.value} for provider ${activeProvider.value}`)
     return ""
   }
-  
   // Return the key value or an empty string if not found
   return groupedKeys.value[activeProvider.value][activeEnvironment.value][keyName] || ""
 }
 
+const getProviderDisplayName = (): string => {
+  switch (activeProvider.value) {
+    case 'nip':
+      return 'NIP'
+    case 'easyPay':
+      return 'Easy Pay'
+    case 'afrigo':
+      return 'Afrigo'
+    default:
+      return activeProvider.value
+  }
+}
+
 const getLastUpdated = (): string => {
-  if (!groupedKeys.value[activeProvider.value] || 
-      !groupedKeys.value[activeProvider.value][activeEnvironment.value] || 
-      !groupedKeys.value[activeProvider.value][activeEnvironment.value].lastUpdated) {
+  if (!groupedKeys.value[activeProvider.value] || !groupedKeys.value[activeProvider.value][activeEnvironment.value] || !groupedKeys.value[activeProvider.value][activeEnvironment.value].lastUpdated) {
     return "N/A"
   }
-  
   return groupedKeys.value[activeProvider.value][activeEnvironment.value].lastUpdated
 }
 
 const maskKey = (key: string): string => {
   if (!key) return ''
   if (key.length <= 12) return '••••••••••••'
-  
   const prefix = key.substring(0, 8)
   const suffix = key.substring(key.length - 4)
   return `${prefix}${'•'.repeat(10)}${suffix}`
@@ -974,11 +1176,10 @@ const updateKey = (): void => {
   if (!groupedKeys.value[activeProvider.value]) {
     groupedKeys.value[activeProvider.value] = {}
   }
-  
   if (!groupedKeys.value[activeProvider.value][activeEnvironment.value]) {
     groupedKeys.value[activeProvider.value][activeEnvironment.value] = {}
   }
-  
+
   groupedKeys.value[activeProvider.value][activeEnvironment.value][editKeyName.value] = editKeyValue.value
   hasUnsavedChanges.value = true
   closeEditKeyModal()
@@ -997,29 +1198,29 @@ const closeRegenerateKeyModal = (): void => {
 
 const regenerateKey = (): void => {
   // In a real app, this would call an API to regenerate the key
-  const prefix = activeProvider.value === 'nip' ? 'nip' : 'ep'
+  const prefix = activeProvider.value === 'nip' ? 'nip' : activeProvider.value === 'afrigo' ? 'afr' : 'ep'
   const env = activeEnvironment.value === 'staging' ? 'staging' : 'live'
   const randomSuffix = Math.random().toString(36).substring(2, 15)
-  
   let newKey = ''
+
   if (regenerateKeyName.value === 'clientSecret') {
     newKey = `${prefix}_${env}_secret_${randomSuffix}`
   } else if (regenerateKeyName.value === 'authorizationcode') {
     newKey = `${prefix}_${env}_auth_${randomSuffix}`
+  } else if (regenerateKeyName.value === 'aeskey') {
+    newKey = `${prefix}_${env}_aes_${randomSuffix}`
   }
-  
+
   // Ensure the provider and environment objects exist
   if (!groupedKeys.value[activeProvider.value]) {
     groupedKeys.value[activeProvider.value] = {}
   }
-  
   if (!groupedKeys.value[activeProvider.value][activeEnvironment.value]) {
     groupedKeys.value[activeProvider.value][activeEnvironment.value] = {}
   }
-  
+
   groupedKeys.value[activeProvider.value][activeEnvironment.value][regenerateKeyName.value] = newKey
   hasUnsavedChanges.value = true
-  
   closeRegenerateKeyModal()
   showSuccessToast(`${regenerateKeyName.value} regenerated. Don't forget to save your changes.`)
 }
@@ -1041,34 +1242,37 @@ const saveChanges = async (): Promise<void> => {
   try {
     // Create an array of updated keys in the format expected by the backend
     const updatedKeys: ApiKey[] = []
-    
+
     // Ensure the provider and environment objects exist
     if (!groupedKeys.value[activeProvider.value]) {
       groupedKeys.value[activeProvider.value] = {}
     }
-    
     if (!groupedKeys.value[activeProvider.value][activeEnvironment.value]) {
       groupedKeys.value[activeProvider.value][activeEnvironment.value] = {}
     }
-    
+
     Object.entries(groupedKeys.value[activeProvider.value][activeEnvironment.value]).forEach(([key, value]) => {
       if (key !== 'lastUpdated') {
-        const prefix = activeProvider.value === 'easyPay' 
-          ? (activeEnvironment.value === 'staging' ? 'easypay-staging' : 'easypay')
-          : (activeEnvironment.value === 'staging' ? 'nip-staging' : 'nip')
-        
+        let prefix = ''
+        if (activeProvider.value === 'easyPay') {
+          prefix = activeEnvironment.value === 'staging' ? 'easypay-staging' : 'easypay'
+        } else if (activeProvider.value === 'nip') {
+          prefix = activeEnvironment.value === 'staging' ? 'nip-staging' : 'nip'
+        } else if (activeProvider.value === 'afrigo') {
+          prefix = activeEnvironment.value === 'staging' ? 'afrigo-staging' : 'afrigo'
+        }
+
         updatedKeys.push({
           key: `${prefix}.${key}`,
           value: value
         })
       }
     })
-    
+
     await updateCredentials(updatedKeys)
-        
+
     // Update the lastUpdated field
     groupedKeys.value[activeProvider.value][activeEnvironment.value].lastUpdated = new Date().toISOString().split('T')[0]
-    
     hasUnsavedChanges.value = false
     closeSaveChangesModal()
     showSuccessToast('Changes saved successfully')
@@ -1106,7 +1310,6 @@ const handleEnvironmentChange = (environment: string): void => {
 const showSuccessToast = (message: string, success: boolean = true): void => {
   toastMessage.value = message
   showToast.value = true
-  
   setTimeout(() => {
     showToast.value = false
   }, 3000)
@@ -1130,12 +1333,12 @@ const closePasswordModal = (): void => {
 const validatePasswordForm = (): boolean => {
   let isValid = true
   passwordErrors.value = {}
-  
+
   if (!passwordForm.value.currentPassword) {
     passwordErrors.value.currentPassword = 'Current password is required'
     isValid = false
   }
-  
+
   if (!passwordForm.value.newPassword) {
     passwordErrors.value.newPassword = 'New password is required'
     isValid = false
@@ -1143,7 +1346,7 @@ const validatePasswordForm = (): boolean => {
     passwordErrors.value.newPassword = 'Password must be at least 8 characters'
     isValid = false
   }
-  
+
   if (!passwordForm.value.confirmPassword) {
     passwordErrors.value.confirmPassword = 'Please confirm your new password'
     isValid = false
@@ -1151,7 +1354,7 @@ const validatePasswordForm = (): boolean => {
     passwordErrors.value.confirmPassword = 'Passwords do not match'
     isValid = false
   }
-  
+
   return isValid
 }
 
@@ -1159,16 +1362,15 @@ const handleUpdatePassword = async (): Promise<void> => {
   if (!validatePasswordForm()) {
     return
   }
-  
+
   isUpdatingPassword.value = true
-  
   try {
     const payloadObj = {
       oldPassword: passwordForm.value.currentPassword,
       newPassword: passwordForm.value.newPassword,
     }
-    await updatePassword(payloadObj)
-    .then((data) => {
+
+    await updatePassword(payloadObj).then((data) => {
       console.log(data, 'data here')
       if(data.type !== 'ERROR'){
         localStorage.clear()
