@@ -428,6 +428,7 @@ const logout = () => {
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'Accounts', href: '/dashboard/accounts', icon: FileText },
+  { name: 'Saving Details', href: '/dashboard/account-details', icon: FileText },
   { name: 'API Keys', href: '/dashboard/settings', icon: FileText },
   { name: 'Profile', href: '/dashboard/profile', icon: User },
   { name: 'Update Password', href: '/dashboard/update-password', icon: Key }

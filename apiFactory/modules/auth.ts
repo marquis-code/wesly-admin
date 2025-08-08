@@ -70,4 +70,8 @@ export const auth_api = {
         let url = `/auth/providers/upload-file`;
         return GATEWAY_ENDPOINT.post(url, payload);
       },
+	  $_get_saving_details: (savingType: string, metadata: { page: number, size: number}) => {
+		let url = `/auth/providers/get-file?page=${metadata.page}&size=${metadata.size}&type=${savingType}`;
+        return GATEWAY_ENDPOINT.get(url);
+	  }
 }
